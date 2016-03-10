@@ -28,3 +28,7 @@ zip: clean
 
 run:
 	./$(BIN) $(IN)
+
+push:
+	git commit -m "Tarefa 3 em andamento"
+	git push
