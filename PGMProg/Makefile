@@ -31,4 +31,4 @@ run:
 
 push:
 	git commit -m "Tarefa 3 em andamento"
-	git push rhobernardi RockforeveR43
+	git push rhobernardi
