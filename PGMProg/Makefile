@@ -17,7 +17,6 @@ compile:
 debug:
 	valgrind --leak-check=full ./$(BIN) $(IN)
 
-
 clean:
 	@find -name "*~" | xargs rm -rf
 	@find -name $(BIN) | xargs rm -rf
