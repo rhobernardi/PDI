@@ -8,7 +8,7 @@
 *
 ******************************************************************/
 
-#include "pdi.h"
+#include "pdi.hpp"
 
 /**
  * Aloca memória necessária para uma Image, recebendo suas informações
