@@ -12,12 +12,20 @@
 #include <stdio.h>
 #include <string.h>
 #include <math.h>
-//#include "pdi.hpp"
+//#include "invert.hpp"
+//#include "average.hpp"
+//#include "floodfill.hpp"
 
+#include <stack>
 #include <iostream>
 using namespace std;
 
 typedef unsigned char uchar;
+
+typedef struct node
+{
+    int 
+};
 
 typedef struct IMGstructure {
     char type[3];
@@ -327,6 +335,8 @@ void processFloodFill(Image *img, int x, int y, uchar last_tone, uchar new_tone)
 void floodFill(Image *imgIn, Image *imgOut, int x, int y, uchar new_tone)
 {
     copyImage(imgIn, imgOut);
+
+	stack<uchar> stack;
 
     int index; uchar last_tone;
     index = (imgOut->width*x);
