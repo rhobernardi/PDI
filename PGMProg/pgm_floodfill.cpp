@@ -337,6 +337,7 @@ void floodFill(Image *imgIn, Image *imgOut, int x, int y, uchar new_tone)
     copyImage(imgIn, imgOut);
 
 	stack<uchar> stack;
+    
 
     int index; uchar last_tone;
     index = (imgOut->width*x);
