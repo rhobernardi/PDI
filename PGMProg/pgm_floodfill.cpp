@@ -415,10 +415,11 @@ int main(int argc, char const *argv[])
                 printf("Done.\n");
             }
 
-            else printf("== ERROR. VALUE MUST BE BETWEEN '0' AND '%d' ==\n\n", imgIn.maxVal);
+            else printf("== ERROR. FOR THIS IMAGE, VALUE MUST BE BETWEEN '0' AND '%d' ==\n\n", imgIn.maxVal);
         }
 
-        else printf("== ERROR. COORDINATE 'X' MUST BE BETWEEN '0' AND '%d', COORDINATE 'Y' BETWEEN '0' AND '%d' ==\n\n", imgIn.width-1, imgIn.height-1);
+        else printf("== ERROR. FOR THIS IMAGE, COORDINATE 'X' MUST BE BETWEEN '0' AND '%d', 
+                    COORDINATE 'Y' BETWEEN '0' AND '%d' ==\n\n", imgIn.width-1, imgIn.height-1);
     }
 
     else printf("== IMAGE IS NOT IN PGM FORMAT (P2 format) ==\n\n");
