@@ -27,6 +27,8 @@ typedef struct node
     int 
 };
 
+
+
 typedef struct IMGstructure {
     char type[3];
     int width;
@@ -360,6 +362,16 @@ void floodFill(Image *imgIn, Image *imgOut, int x, int y, uchar new_tone)
     //     //if()
     //     //imgOut->pixel[p_aux]
     // }
+    // 
+ Flood-fill (node, target-color, replacement-color):
+ 1. If target-color is equal to replacement-color, return.
+ 2. If the color of node is not equal to target-color, return.
+ 3. Set the color of node to replacement-color.
+ 4. Perform Flood-fill (one step to the south of node, target-color, replacement-color).
+    Perform Flood-fill (one step to the north of node, target-color, replacement-color).
+    Perform Flood-fill (one step to the west of node, target-color, replacement-color).
+    Perform Flood-fill (one step to the east of node, target-color, replacement-color).
+ 5. Return.
 }
 
 
