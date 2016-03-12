@@ -151,7 +151,7 @@ void saveImage(Image *img, char *out)
     fprintf(output, "%d %d\n", img->width, img->height);
     fprintf(output, "%d\n", img->maxVal);
 
-    // escreve dados da imagem
+    // escreve dados da imagem 
 
     if(img->type[0] == 'P' && img->type[1] == '2') 
     {
@@ -294,15 +294,27 @@ void analyzeFrequency(Image *imgIn, double *percent_vec, double *average, double
     printf("Done.\n");
 }
 
+/*
+ Flood-fill (node, target-color, replacement-color):
+ 1. If target-color is equal to replacement-color, return.
+ 2. If the color of node is not equal to target-color, return.
+ 3. Set the color of node to replacement-color.
+ 4. Perform Flood-fill (one step to the south of node, target-color, replacement-color).
+    Perform Flood-fill (one step to the north of node, target-color, replacement-color).
+    Perform Flood-fill (one step to the west of node, target-color, replacement-color).
+    Perform Flood-fill (one step to the east of node, target-color, replacement-color).
+ 5. Return.
+ */
+
 void processFloodFill(Image *img, int x, int y, uchar last_tone, uchar new_tone)
 {
     int index; uchar this_pixel;
+    
+    index = (img->width*x);
+    this_pixel = img->pixel[index];
 
     if((x >= 0 || x <= img->width) && (y >= 0 || y <= img->height))
     {  
-        index = (img->width*x);
-        this_pixel = img->pixel[index];
-
         if(this_pixel == last_tone)
         {   
             img->pixel[index] = new_tone;
@@ -338,14 +350,11 @@ void floodFill(Image *imgIn, Image *imgOut, int x, int y, uchar new_tone)
 {
     copyImage(imgIn, imgOut);
 
-	stack<uchar> stack;
-    
+	int index; uchar target_tone;
+    index = (imgOut->width*x+y);
+    target_tone = imgOut->pixel[index];
 
-    int index; uchar last_tone;
-    index = (imgOut->width*x);
-    last_tone = imgOut->pixel[index];
-
-    processFloodFill(imgOut, x, y, last_tone, new_tone);
+    processFloodFill(imgOut->pixel[index], x, y, last_tone, new_tone);
 
     // processFloodFill(imgOut, x, y-1);
     // processFloodFill(imgOut, x+1, y+1);
@@ -363,15 +372,6 @@ void floodFill(Image *imgIn, Image *imgOut, int x, int y, uchar new_tone)
     //     //imgOut->pixel[p_aux]
     // }
     // 
- Flood-fill (node, target-color, replacement-color):
- 1. If target-color is equal to replacement-color, return.
- 2. If the color of node is not equal to target-color, return.
- 3. Set the color of node to replacement-color.
- 4. Perform Flood-fill (one step to the south of node, target-color, replacement-color).
-    Perform Flood-fill (one step to the north of node, target-color, replacement-color).
-    Perform Flood-fill (one step to the west of node, target-color, replacement-color).
-    Perform Flood-fill (one step to the east of node, target-color, replacement-color).
- 5. Return.
 }
 
 
@@ -406,7 +406,7 @@ int main(int argc, char const *argv[])
         double average = 0, stand_dev = 0;
         double *percent_vec = (double *) malloc((imgIn.maxVal+1)*sizeof(double)); // 255 valores para pixel
 
-        unsigned int coordx, coordy, value;
+        unsigned int coordx, coordy, replacement_tone;
         printf("\nCoordinates(x y): ");
         scanf("%d %d", &coordx, &coordy);
 
@@ -414,20 +414,23 @@ int main(int argc, char const *argv[])
         {
             //cout << coordx << ' ' << coordy << endl;
             printf("\nColor value(0 <= val <= 255): ");
-            scanf("%d", &value);
+            scanf("%d", &replacement_tone);
 
-            if(value >= 0 && value <= imgIn.maxVal)
+            if(replacement_tone >= 0 && replacement_tone <= imgIn.maxVal)
             {
                 printf("\nProcessing...\n");
-                //processInversion(&imgIn, &imgOut);
-                //analyzeFrequency(&imgIn, percent_vec, &average, &stand_dev);
-                floodFill(&imgIn, &imgOut, coordx, coordy, value);
+                
+                copyImage(imgIn, imgOut);
+                int index = imgOut.width*x+y;
+                unsigned int target_tone = 
+
+                floodFill(&imgOut.pixel[index], coordx, coordy, replacement_tone);
                 
                 saveImage(&imgOut, output);
                 printf("Done.\n");
             }
 
-            else printf("== ERROR. FOR THIS IMAGE, VALUE MUST BE BETWEEN '0' AND '%d' ==\n\n", imgIn.maxVal);
+            else printf("== ERROR. FOR THIS IMAGE, REPLACEMENT TONE MUST BE BETWEEN '0' AND '%d' ==\n\n", imgIn.maxVal);
         }
 
         else printf("== ERROR. FOR THIS IMAGE, COORDINATE 'X' MUST BE BETWEEN '0' AND '%d', 
