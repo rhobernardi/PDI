@@ -318,24 +318,21 @@ void floodFill(Image *img, unsigned int x, unsigned int y, uchar target_tone, uc
 
     //if(n == 4 && index == 539) saveImage(img, "out_segfault.pgm");
 
-        cout << "=========\npixel existe: index " << index << "     max de y: "<< img->height << endl;
-        //cout << "function number: " << n << endl;
+        //cout << "=========\npixel existe: index " << index << "     max de y: "<< img->height << endl;
 
         if(target_tone == replacement_tone) return;
-        cout << "ja foi pintado" << endl;
-        cout << "this_pixel = " << (int) this_pixel << " e target_tone = " << (int) target_tone << endl;
+        //cout << "ja foi pintado" << endl;
+        //cout << "this_pixel = " << (int) this_pixel << " e target_tone = " << (int) target_tone << endl;
         if(this_pixel != target_tone) return;
         
-        
         colorPixel(&img->pixel[index], replacement_tone);
-        //this_pixel = replacement_tone;
-        //img->pixel[index] = this_pixel;
 
         cout << "pixel pintado de cor nr " << (int)img->pixel[index] << endl;
     
         floodFill(img, x,  y+1,     target_tone,   replacement_tone);
         floodFill(img, x,  y-1,     target_tone,   replacement_tone);
-        floodFill(img, x+1,    y,   target_tone,   replacement_tone);  
+        //if(x%img->width > 0)
+            floodFill(img, x+1,    y,   target_tone,   replacement_tone);  
         floodFill(img, x-1,    y,   target_tone,   replacement_tone);
     }
 
