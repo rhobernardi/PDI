@@ -2,7 +2,7 @@
 /*****************************************************************
 *
 *    SCC0251 - Processamento de Imagem
-*    Arquivo pdi.h - Header
+*    Arquivo pdi.hpp - Header com escopo de funcoes
 *
 *    -Rodrigo Bernardi
 *
@@ -17,16 +17,21 @@
 #include <string.h>
 #include <math.h>
 
+#include <iostream>
+using namespace std;
+
+
 
 typedef unsigned char uchar;
 
-struct IMGstructure {
+typedef struct IMGstructure {
     char type[3];
     int width;
     int height;
     int maxVal;
     uchar *pixel;
-};
+} Image;
+
 
 
 
@@ -63,7 +68,7 @@ void readImage(Image *imgIn, Image *imgOut, char *in);
  * @param img   Imagem de entrada
  * @param out   Nome do arquivo da imagem de saida
  */
-void saveImage(Image *img, char *out);
+void saveImage(Image *img, const char *out);
 
 /**
  * Copia a imagem de entrada para a imagem de saida.
@@ -72,6 +77,14 @@ void saveImage(Image *img, char *out);
  * @param imgOut    Imagem de saida
  */
 void copyImage(Image *imgIn, Image *imgOut);
+
+/**
+ * Mudar cor do pixel
+ * 
+ * @param pixel     Pixel de entrada
+ * @param tone      Tom de cinza para o qual quer mudar
+ */
+void colorPixel(uchar *pixel, uchar tone);
 
 /**
  * Inverte as tonalidades de cor da imagem original.
@@ -112,6 +125,19 @@ double standardDeviation(Image *imgIn, double *percent_vec, double *average, int
  * @param stand_dev     Desvio Padrao calculado
  */
 void analyzeFrequency(Image *imgIn, double *percent_vec, double *average, double *stand_dev);
+
+/**
+ * A partir de uma coordenada de entrada e um tom de cinza, a area de cores iguais a do pixel
+ * da coordenada é colorida com o tom de entrada.
+ * Algoritmo implementado com vizinhanca 4.
+ * 
+ * @param img                   Imagem de entrada
+ * @param x                     Coordenada x
+ * @param y                     Coordenada Y
+ * @param target_tone           Tom a ser reposto
+ * @param replacement_tone      Tom de reposicao
+ */
+void floodFill(Image *img, unsigned int x, unsigned int y, uchar target_tone, uchar replacement_tone);
 
 
 #endif

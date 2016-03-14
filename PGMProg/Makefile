@@ -1,5 +1,5 @@
 
-CC = pgm_floodfill.cpp
+CC = pdi.cpp main.cpp
 BIN = tarefa3
 PZIP = 8066395_Tarefa3.zip
 
@@ -12,7 +12,7 @@ all: clean compile run
 
 
 compile:
-	g++ -o $(BIN) $(CC)
+	g++ *.cpp -o $(BIN)
 
 debug: compile
 	valgrind -v --leak-check=full --show-leak-kinds=all ./$(BIN) $(IN)
@@ -24,7 +24,7 @@ clean:
 
 zip: clean
 	@rm -f $(PZIP)
-	@zip -r $(PZIP) $(CC) Makefile README.md $(IN) #image.pgm
+	@zip -r $(PZIP) $(CC) Makefile README.md $(IN)
 
 run: compile
 	./$(BIN) $(IN)

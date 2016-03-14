@@ -2,7 +2,7 @@
 /*****************************************************************
 *
 *    SCC0251 - Processamento de Imagem
-*    Arquivo pdi.c - Funcoes implementadas
+*    Arquivo pdi.cpp - Funcoes implementadas
 *
 *    -Rodrigo Bernardi
 *
@@ -10,15 +10,8 @@
 
 #include "pdi.hpp"
 
-/**
- * Aloca memória necessária para uma Image, recebendo suas informações
- * 
- * @param img       Imagem de entrada
- * @param type      Tipo (P1,P2,P3,P4,P5,P6)
- * @param width     Largura
- * @param height    Altura
- * @param maxVal    Valor maximo do tom de cinza
- */
+
+
 void allocData(Image *img, char* type, int width, int height, int maxVal) 
 {
     strcpy(img->type, type);
@@ -32,11 +25,10 @@ void allocData(Image *img, char* type, int width, int height, int maxVal)
     }
 }
 
-/**
- * Libera memória usada por uma Image.
- * 
- * @param img   Imagem de entrada
- */
+
+
+
+
 void freeData(Image *img) 
 {    
     if (img->type[0] == 'P' && img->type[1] == '2') 
@@ -45,13 +37,10 @@ void freeData(Image *img)
     }
 }
 
-/**
- * Cria uma estrutura Image, incluindo a leitura do arquivo e a chamada da função para alocar a imagem na memória.
- * 
- * @param imgIn     Imagem de entrada
- * @param imgOut    Imagem de saida
- * @param in        Nome do arquivo da imagem de entrada
- */
+
+
+
+
 void readImage(Image *imgIn, Image *imgOut, char *in) 
 {
     FILE *input;
@@ -105,13 +94,11 @@ void readImage(Image *imgIn, Image *imgOut, char *in)
     fclose(input);
 }
 
-/**
- * Cria um arquivo com o resultado guardado na matriz de imagem de saída.
- * 
- * @param img   Imagem de entrada
- * @param out   Nome do arquivo da imagem de saida
- */
-void saveImage(Image *img, char *out) 
+
+
+
+
+void saveImage(Image *img, const char *out) 
 {
     FILE *output;
 
@@ -122,7 +109,7 @@ void saveImage(Image *img, char *out)
     fprintf(output, "%d %d\n", img->width, img->height);
     fprintf(output, "%d\n", img->maxVal);
 
-    // escreve dados da imagem
+    // escreve dados da imagem 
 
     if(img->type[0] == 'P' && img->type[1] == '2') 
     {
@@ -135,41 +122,42 @@ void saveImage(Image *img, char *out)
     fclose(output);
 }
 
-/**
- * Copia a imagem de entrada para a imagem de saida.
- * 
- * @param imgIn     Imagem de entrada
- * @param imgOut    Imagem de saida
- */
+
+
+
+
 void copyImage(Image *imgIn, Image *imgOut)
 {
     for(int i = 0; i < imgIn->height * imgIn->width; i++)
         imgOut->pixel[i] = imgIn->pixel[i];
 }
 
-/**
- * Inverte as tonalidades de cor da imagem original.
- * 
- * @param imgIn     Imagem de entrada
- * @param imgOut    Imagem de saida
- */
+
+
+
+
+void colorPixel(uchar *pixel, uchar tone)
+{
+    (*pixel) = tone;
+}
+
+
+
+
+
 void processInversion(Image *imgIn, Image *imgOut) 
 {
     for (int i = 0; i < imgIn->height * imgIn->width; i++) 
     {
         imgOut->pixel[i] = imgIn->pixel[i];
-        imgOut->pixel[i] = imgIn->maxVal - imgOut->pixel[i];
+        colorPixel(&imgOut->pixel[i], imgIn->maxVal - imgOut->pixel[i]);
     }
 }
 
-/**
- * Calcula a media aritmetica dos pixels.
- * 
- * @param imgIn         Imagem de entrada
- * @param percent_vec   Vetor de porcentagens de cada tom
- * @param n             Tamanho do vetor de porcentagem
- * @return              Media Aritmetica
- */
+
+
+
+
 double averageCalc(Image *imgIn, double *percent_vec, int n) 
 {    
     double sum=0;
@@ -185,15 +173,10 @@ double averageCalc(Image *imgIn, double *percent_vec, int n)
     return sum / n;
 }
 
-/**
- * Calcula o desvio padrao a partir da media.
- * 
- * @param imgIn         Imagem de entrada
- * @param percent_vec   Vetor de porcentagens de cada tom
- * @param average       Media Aritmetica calculada
- * @param n             Tamanho do vetor de porcentagem
- * @return              Desvio Padrao
- */
+
+
+
+
 double standardDeviation(Image *imgIn, double *percent_vec, double *average, int n) 
 {
     double dp=0;
@@ -207,15 +190,10 @@ double standardDeviation(Image *imgIn, double *percent_vec, double *average, int
     return sqrt(dp / (n-1));
 }
 
-/**
- * Analiza frequencia para cada tonalidade de cinza e retorna vetor com indice indicando valores dos tons e suas porcentagens.
- * Retorna tambem o valor medio e o desvio padrao por referencia.
- * 
- * @param imgIn         Imagem de entrada
- * @param percent_vec   Vetor de porcentagens de cada tom
- * @param average       Media Aritmetica calculada
- * @param stand_dev     Desvio Padrao calculado
- */
+
+
+
+
 void analyzeFrequency(Image *imgIn, double *percent_vec, double *average, double *stand_dev) 
 {    
     int total=0;
@@ -254,29 +232,36 @@ void analyzeFrequency(Image *imgIn, double *percent_vec, double *average, double
     printf("Done.\n");
 }
 
-/**
- * [floodFill description]
- * 
- * @param imgIn      Imagem de entrada
- * @param imgOut     Imagem de saida
- * @param x          Coordenada x
- * @param y          Coordenada y
- * @param newtone    Novo tom que os pixels assumirao
- */
-void floodFill(Image *imgIn, Image *imgOut, int x, int y, int newtone)
+
+
+
+
+void floodFill(Image *img, unsigned int x, unsigned int y, uchar target_tone, uchar replacement_tone)
 {
-    int p_aux; uchar p_tone;
+    unsigned int index; uchar this_pixel;
 
-    copyImage(imgIn, imgOut);
-
-    p_aux = (imgOut->width*x);
-    p_tone = imgOut->pixel[p_aux];
-
-    
-
-    for(int i = 0; i < imgIn->width * imgIn->height; i++)
+    // confere se o pixel existe, se nao retorna 
+    if((x >= 0 && x < img->width) && (y >= 0 && y < img->height))
     {
-        if()
-        imgOut->pixel[p_aux]
+        // indexa pixel
+        index = ((img->width*y)+x);
+        this_pixel = img->pixel[index];
+
+        // se ja estiver colorido com o tom de reposicao, retorna
+        if(target_tone == replacement_tone) return;
+
+        // se o pixel atual nao tem a mesma cor dos outros, retorna
+        if(this_pixel != target_tone) return;
+        
+        colorPixel(&img->pixel[index], replacement_tone);
+    
+        floodFill(img, x,  y+1,     target_tone,   replacement_tone); // proximo pixel acima
+        floodFill(img, x,  y-1,     target_tone,   replacement_tone); // proximo pixel abaixo
+        floodFill(img, x+1,    y,   target_tone,   replacement_tone); // proximo pixel a direita
+        floodFill(img, x-1,    y,   target_tone,   replacement_tone); // proximo pixel a esquerda
     }
+
+    else return;
+
+    return;
 }
