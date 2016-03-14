@@ -1,4 +1,4 @@
-#Tarefa 3 - Processamento de Imagem
+#Tarefa 4 - Processamento de Imagem
 
 Para compilar:
 

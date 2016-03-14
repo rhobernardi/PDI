@@ -1,6 +1,6 @@
 
 CC = pdi.cpp main.cpp
-BIN = tarefa4
+BIN = tarefa3
 PZIP = 8066395_Tarefa3.zip
 
 IN = image.pgm

@@ -2,7 +2,7 @@
 /*****************************************************************
 *
 *    SCC0251 - Processamento de Imagem
-*    Tarefa 3 - Flood Fill em imagem.
+*    Tarefa 4 - .
 *
 *    -Rodrigo Bernardi
 *
