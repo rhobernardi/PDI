@@ -8,6 +8,7 @@ OUT = img_out.pgm
 
 
 
+
 all: clean compile
 
 
