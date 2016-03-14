@@ -8,13 +8,13 @@ OUT = img_out.pgm
 
 
 
-all: compile
+all: clean compile run
 
 
 compile:
 	g++ -o $(BIN) $(CC)
 
-debug:
+debug: compile
 	valgrind -v --leak-check=full --show-leak-kinds=all ./$(BIN) $(IN)
 
 clean:
@@ -26,9 +26,10 @@ zip: clean
 	@rm -f $(PZIP)
 	@zip -r $(PZIP) $(CC) Makefile README.md $(IN) #image.pgm
 
-run:
+run: compile
 	./$(BIN) $(IN)
 
 push:
+	git add *
 	git commit -m "Tarefa 3 em andamento"
 	git push #

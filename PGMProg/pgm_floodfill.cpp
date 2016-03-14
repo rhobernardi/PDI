@@ -132,7 +132,7 @@ void readImage(Image *imgIn, Image *imgOut, char *in)
  * @param img   Imagem de entrada
  * @param out   Nome do arquivo da imagem de saida
  */
-void saveImage(Image *img, char *out) 
+void saveImage(Image *img, const char *out) 
 {
     FILE *output;
 
@@ -307,27 +307,32 @@ void analyzeFrequency(Image *imgIn, double *percent_vec, double *average, double
  * @param target_tone      [description]
  * @param replacement_tone [description]
  */
-void floodFill(Image *img, int x, int y, uchar target_tone, uchar replacement_tone)
+void floodFill(Image *img, unsigned int x, unsigned int y, uchar target_tone, uchar replacement_tone)
 {
-    int index; uchar this_pixel;// north_p, south_p, east_p, west_p;
+    unsigned int index; uchar this_pixel;// north_p, south_p, east_p, west_p;
 
-    index = ((img->width*y)+x);
-    this_pixel = img->pixel[index];
-
-    if((x >= 0 || x < img->width) && (y >= 0 || y < img->height))
+    if((x >= 0 && x < img->width) && (y >= 0 && y < img->height))// && x < x%img->width)
     {
+        index = ((img->width*y)+x);
+        this_pixel = img->pixel[index];
+
+    //if(n == 4 && index == 539) saveImage(img, "out_segfault.pgm");
+
         cout << "=========\npixel existe: index " << index << "     max de y: "<< img->height << endl;
+        //cout << "function number: " << n << endl;
+
         if(target_tone == replacement_tone) return;
-        cout << "hehe" << endl;
-        if(this_pixel != target_tone) return;
+        cout << "ja foi pintado" << endl;
         cout << "this_pixel = " << (int) this_pixel << " e target_tone = " << (int) target_tone << endl;
+        if(this_pixel != target_tone) return;
+        
         
         colorPixel(&img->pixel[index], replacement_tone);
         //this_pixel = replacement_tone;
         //img->pixel[index] = this_pixel;
 
         cout << "pixel pintado de cor nr " << (int)img->pixel[index] << endl;
-            
+    
         floodFill(img, x,  y+1,     target_tone,   replacement_tone);
         floodFill(img, x,  y-1,     target_tone,   replacement_tone);
         floodFill(img, x+1,    y,   target_tone,   replacement_tone);  
