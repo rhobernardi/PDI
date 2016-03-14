@@ -16,18 +16,10 @@
 //#include "average.hpp"
 //#include "floodfill.hpp"
 
-#include <stack>
 #include <iostream>
 using namespace std;
 
 typedef unsigned char uchar;
-
-typedef struct node
-{
-    int 
-};
-
-
 
 typedef struct IMGstructure {
     char type[3];
@@ -306,30 +298,40 @@ void analyzeFrequency(Image *imgIn, double *percent_vec, double *average, double
  5. Return.
  */
 
-void processFloodFill(Image *img, int x, int y, uchar last_tone, uchar new_tone)
+
+/**
+ * [floodFill description]
+ * @param img              [description]
+ * @param x                [description]
+ * @param y                [description]
+ * @param target_tone      [description]
+ * @param replacement_tone [description]
+ */
+void floodFill(Image *img, int x, int y, uchar target_tone, uchar replacement_tone)
 {
-    int index; uchar this_pixel;
-    
-    index = (img->width*x);
+    int index; uchar this_pixel;// north_p, south_p, east_p, west_p;
+
+    index = ((img->width*y)+x);
     this_pixel = img->pixel[index];
 
-    if((x >= 0 || x <= img->width) && (y >= 0 || y <= img->height))
-    {  
-        if(this_pixel == last_tone)
-        {   
-            img->pixel[index] = new_tone;
+    if((x >= 0 || x < img->width) && (y >= 0 || y < img->height))
+    {
+        cout << "=========\npixel existe: index " << index << "     max de y: "<< img->height << endl;
+        if(target_tone == replacement_tone) return;
+        cout << "hehe" << endl;
+        if(this_pixel != target_tone) return;
+        cout << "this_pixel = " << (int) this_pixel << " e target_tone = " << (int) target_tone << endl;
+        
+        colorPixel(&img->pixel[index], replacement_tone);
+        //this_pixel = replacement_tone;
+        //img->pixel[index] = this_pixel;
 
-            processFloodFill(img, x,    y+1,   last_tone,   new_tone);
-            // processFloodFill(img, x,    y-1,   last_tone,   new_tone);
-            // processFloodFill(img, x+1,  y+1,   last_tone,   new_tone);
-            // processFloodFill(img, x+1,  y,     last_tone,   new_tone);
-            // processFloodFill(img, x+1,  y-1,   last_tone,   new_tone);
-            // processFloodFill(img, x-1,  y-1,   last_tone,   new_tone);
-            // processFloodFill(img, x-1,  y,     last_tone,   new_tone);
-            // processFloodFill(img, x-1,  y+1,   last_tone,   new_tone);
-        }
-
-        else return;        
+        cout << "pixel pintado de cor nr " << (int)img->pixel[index] << endl;
+            
+        floodFill(img, x,  y+1,     target_tone,   replacement_tone);
+        floodFill(img, x,  y-1,     target_tone,   replacement_tone);
+        floodFill(img, x+1,    y,   target_tone,   replacement_tone);  
+        floodFill(img, x-1,    y,   target_tone,   replacement_tone);
     }
 
     else return;
@@ -337,42 +339,12 @@ void processFloodFill(Image *img, int x, int y, uchar last_tone, uchar new_tone)
     return;
 }
 
-/**
- * [floodFill description]
- * 
- * @param imgIn      Imagem de entrada
- * @param imgOut     Imagem de saida
- * @param x          Coordenada x
- * @param y          Coordenada y
- * @param newtone    Novo tom que os pixels assumirao
- */
-void floodFill(Image *imgIn, Image *imgOut, int x, int y, uchar new_tone)
-{
-    copyImage(imgIn, imgOut);
 
-	int index; uchar target_tone;
-    index = (imgOut->width*x+y);
-    target_tone = imgOut->pixel[index];
 
-    processFloodFill(imgOut->pixel[index], x, y, last_tone, new_tone);
 
-    // processFloodFill(imgOut, x, y-1);
-    // processFloodFill(imgOut, x+1, y+1);
-    // processFloodFill(imgOut, x+1, y);
-    // processFloodFill(imgOut, x+1, y-1);
-    // processFloodFill(imgOut, x-1, y-1);
-    // processFloodFill(imgOut, x-1, y);
-    // processFloodFill(imgOut, x-1, y+1);
 
-    //imgOut->pixel[index] = newtone;
 
-    // for(int i = 0; i < imgIn->width * imgIn->height; i++)
-    // {
-    //     //if()
-    //     //imgOut->pixel[p_aux]
-    // }
-    // 
-}
+
 
 
 
@@ -406,7 +378,9 @@ int main(int argc, char const *argv[])
         double average = 0, stand_dev = 0;
         double *percent_vec = (double *) malloc((imgIn.maxVal+1)*sizeof(double)); // 255 valores para pixel
 
-        unsigned int coordx, coordy, replacement_tone;
+        unsigned int coordx, coordy;
+        uchar replacement_tone;
+
         printf("\nCoordinates(x y): ");
         scanf("%d %d", &coordx, &coordy);
 
@@ -414,17 +388,16 @@ int main(int argc, char const *argv[])
         {
             //cout << coordx << ' ' << coordy << endl;
             printf("\nColor value(0 <= val <= 255): ");
-            scanf("%d", &replacement_tone);
+            scanf("%hhu", &replacement_tone);
 
             if(replacement_tone >= 0 && replacement_tone <= imgIn.maxVal)
             {
                 printf("\nProcessing...\n");
                 
-                copyImage(imgIn, imgOut);
-                int index = imgOut.width*x+y;
-                unsigned int target_tone = 
+                copyImage(&imgIn, &imgOut);
+                uchar target_tone = imgOut.pixel[(imgOut.width*coordy)+coordx];
 
-                floodFill(&imgOut.pixel[index], coordx, coordy, replacement_tone);
+                floodFill(&imgOut, coordx, coordy, target_tone, replacement_tone);
                 
                 saveImage(&imgOut, output);
                 printf("Done.\n");
@@ -433,8 +406,7 @@ int main(int argc, char const *argv[])
             else printf("== ERROR. FOR THIS IMAGE, REPLACEMENT TONE MUST BE BETWEEN '0' AND '%d' ==\n\n", imgIn.maxVal);
         }
 
-        else printf("== ERROR. FOR THIS IMAGE, COORDINATE 'X' MUST BE BETWEEN '0' AND '%d', 
-                    COORDINATE 'Y' BETWEEN '0' AND '%d' ==\n\n", imgIn.width-1, imgIn.height-1);
+        else printf("== ERROR. FOR THIS IMAGE, COORDINATE 'X' MUST BE BETWEEN '0' AND '%d', COORDINATE 'Y' BETWEEN '0' AND '%d' ==\n\n", imgIn.width-1, imgIn.height-1);
     }
 
     else printf("== IMAGE IS NOT IN PGM FORMAT (P2 format) ==\n\n");

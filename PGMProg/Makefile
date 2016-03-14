@@ -15,7 +15,7 @@ compile:
 	g++ -o $(BIN) $(CC)
 
 debug:
-	valgrind --leak-check=full ./$(BIN) $(IN)
+	valgrind -v --leak-check=full --show-leak-kinds=all ./$(BIN) $(IN)
 
 clean:
 	@find -name "*~" | xargs rm -rf
