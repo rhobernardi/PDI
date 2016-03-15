@@ -1,5 +1,7 @@
 #Tarefa 4 - Processamento de Imagem
 
+- Rodrigo das Neves Bernardi - 8066395
+
 Para compilar:
 
 	$ make

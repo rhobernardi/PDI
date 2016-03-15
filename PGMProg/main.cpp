@@ -2,13 +2,20 @@
 /*****************************************************************
 *
 *    SCC0251 - Processamento de Imagem
-*    Tarefa 4 - .
+*    Tarefa 4 - Movimentacao de Objeto em imagem binaria
 *
-*    -Rodrigo Bernardi
+*    -Rodrigo das Neves Bernardi - 8066395
 *
 ******************************************************************/
 
 #include "pdi.hpp"
+
+
+/**
+ * Procurar objeto na imagem
+ * Executar comando
+ */
+
 
 
 /**
@@ -24,28 +31,20 @@ int main(int argc, char const *argv[])
 
     uchar *inPixel, *outPixel;
     int size;
-    char input[20], output[20];
+    char input[20], output[20], operation[2], complement[4];
     double result;
 
     strcpy(input, argv[1]);
+    strcpy(operation, argv[2]);
+    strcpy(complement, argv[3]);
     strcpy(output, "img_out.pgm");
 
     // Le a imagem de entrada
     readImage(&imgIn, &imgOut, input);
 
-    size = imgIn.width * imgIn.height;
-
     // Execucao do programa para imagens em escala de cinza (PGM)
     if (imgIn.type[0] == 'P' && imgIn.type[1] == '2')
     {
-        double average = 0, stand_dev = 0;
-        double *percent_vec = (double *) malloc((imgIn.maxVal+1)*sizeof(double)); // 255 valores para pixel
-
-        unsigned int coordx, coordy;
-        uchar replacement_tone;
-
-        int v = sqrt(2);
-
         printf("\nCoordinates(x y): ");
         scanf("%d %d", &coordx, &coordy);
 
@@ -59,7 +58,6 @@ int main(int argc, char const *argv[])
                 printf("\nProcessing...\n");
                 
                 copyImage(&imgIn, &imgOut);
-                uchar target_tone = imgOut.pixel[(imgOut.width*coordy)+coordx];
 
                 floodFill(&imgOut, coordx, coordy, target_tone, replacement_tone);
                 

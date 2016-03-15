@@ -4,7 +4,7 @@
 *    SCC0251 - Processamento de Imagem
 *    Arquivo pdi.hpp - Header com escopo de funcoes
 *
-*    -Rodrigo Bernardi
+*    -Rodrigo das Neves Bernardi - 8066395
 *
 ******************************************************************/
 
@@ -29,7 +29,7 @@ typedef struct IMGstructure {
     int width;
     int height;
     int maxVal;
-    uchar *pixel;
+    uchar **pixel;
 } Image;
 
 
@@ -102,7 +102,7 @@ void processInversion(Image *imgIn, Image *imgOut);
  * @param n             Tamanho do vetor de porcentagem
  * @return              Media Aritmetica
  */
-double averageCalc(Image *imgIn, double *percent_vec, int n);
+double averageCalc(Image *img, double *percent_vec, int n);
 
 /**
  * Calcula o desvio padrao a partir da media.
@@ -113,7 +113,7 @@ double averageCalc(Image *imgIn, double *percent_vec, int n);
  * @param n             Tamanho do vetor de porcentagem
  * @return              Desvio Padrao
  */
-double standardDeviation(Image *imgIn, double *percent_vec, double *average, int n);
+double standardDeviation(Image *img, double *percent_vec, double *average, int n);
 
 /**
  * Analiza frequencia para cada tonalidade de cinza e retorna vetor com indice indicando valores dos tons e suas porcentagens.
@@ -124,7 +124,7 @@ double standardDeviation(Image *imgIn, double *percent_vec, double *average, int
  * @param average       Media Aritmetica calculada
  * @param stand_dev     Desvio Padrao calculado
  */
-void analyzeFrequency(Image *imgIn, double *percent_vec, double *average, double *stand_dev);
+void analyzeFrequency(Image *img, double *percent_vec, double *average, double *stand_dev);
 
 /**
  * A partir de uma coordenada de entrada e um tom de cinza, a area de cores iguais a do pixel

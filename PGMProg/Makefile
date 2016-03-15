@@ -6,6 +6,7 @@ PZIP = 8066395_Tarefa3.zip
 IN = image.pgm
 OUT = img_out.pgm
 
+CMD = RO +90
 
 
 
@@ -28,7 +29,7 @@ zip: clean
 	@zip -r $(PZIP) $(CC) Makefile README.md *.hpp $(IN)
 
 run: compile
-	./$(BIN) $(IN)
+	./$(BIN) $(IN) $(CMD)
 	
 push:
 	git add *

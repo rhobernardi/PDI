@@ -4,7 +4,7 @@
 *    SCC0251 - Processamento de Imagem
 *    Arquivo pdi.cpp - Funcoes implementadas
 *
-*    -Rodrigo Bernardi
+*    -Rodrigo das Neves Bernardi - 8066395
 *
 ******************************************************************/
 
@@ -21,7 +21,12 @@ void allocData(Image *img, char* type, int width, int height, int maxVal)
 
     if(img->type[0] == 'P' && img->type[1] == '2') 
     {
-        img->pixel = (uchar*) malloc(width * height * sizeof(uchar));
+        img->pixel = (uchar**) malloc(height * sizeof(uchar*));
+
+        for (int i = 0; i < height; ++i)
+        {
+            img->pixel[i] = (uchar*) malloc(width * sizeof(uchar));
+        }
     }
 }
 
@@ -33,6 +38,11 @@ void freeData(Image *img)
 {    
     if (img->type[0] == 'P' && img->type[1] == '2') 
     {
+        for (int i = 0; i < img->height; ++i)
+        {
+            free(img->pixel[i]);
+        }
+
         free(img->pixel);
     }
 }
@@ -83,10 +93,13 @@ void readImage(Image *imgIn, Image *imgOut, char *in)
             allocData(imgOut, type, width, height, maxVal);
             
             // le dados do arquivo
-            for(int i = 0; i < width * height ; i++) 
+            for(int i = 0; i < height ; ++i)
             {
-                // fscanf(input, "%hhu %hhu %hhu", &(imgIn->data->r[i]), &(imgIn->data->g[i]), &(imgIn->data->b[i]));
-                fscanf(input, "%hhu\n", &(imgIn->pixel[i]));        
+                for (int j = 0; j < width; ++j)
+                {
+                    // fscanf(input, "%hhu %hhu %hhu", &(imgIn->data->r[i]), &(imgIn->data->g[i]), &(imgIn->data->b[i]));
+                    fscanf(input, "%hhu\n", &(imgIn->pixel[i][j]));
+                }
             }
         }
     }
@@ -113,9 +126,12 @@ void saveImage(Image *img, const char *out)
 
     if(img->type[0] == 'P' && img->type[1] == '2') 
     {
-        for (int i = 0; i < img->height * img->width; i++) 
+        for (int i = 0; i < img->height; ++i)
         {
-            fprintf(output, "%hhu\n", img->pixel[i]);
+            for (int j = 0; j < img->width; ++j)
+            {
+                fprintf(output, "%hhu\n", img->pixel[i][j]);
+            }
         }
     }
 
@@ -128,8 +144,11 @@ void saveImage(Image *img, const char *out)
 
 void copyImage(Image *imgIn, Image *imgOut)
 {
-    for(int i = 0; i < imgIn->height * imgIn->width; i++)
-        imgOut->pixel[i] = imgIn->pixel[i];
+    for(int i = 0; i < imgIn->height; ++i)
+        for (int j = 0; j < imgIn->width; ++j)
+        {
+            imgOut->pixel[i][j] = imgIn->pixel[i][j];
+        }
 }
 
 
@@ -145,24 +164,25 @@ void colorPixel(uchar *pixel, uchar tone)
 
 
 
-void processInversion(Image *imgIn, Image *imgOut) 
+void processInversion(Image *imgIn, Image *imgOut)
 {
-    for (int i = 0; i < imgIn->height * imgIn->width; i++) 
-    {
-        imgOut->pixel[i] = imgIn->pixel[i];
-        colorPixel(&imgOut->pixel[i], imgIn->maxVal - imgOut->pixel[i]);
-    }
+    for (int i = 0; i < imgIn->height; ++i) 
+        for (int j = 0; j < imgIn->width; ++j)
+        {
+            imgOut->pixel[i][j] = imgIn->pixel[i][j];
+            colorPixel(&imgOut->pixel[i][j], imgIn->maxVal - imgOut->pixel[i][j]);
+        }
 }
 
 
 
 
 
-double averageCalc(Image *imgIn, double *percent_vec, int n) 
+double averageCalc(Image *img, double *percent_vec, int n)
 {    
     double sum=0;
     
-    for (int i = 0; i < imgIn->maxVal; ++i) 
+    for (int i = 0; i < img->maxVal; ++i)
     {
         if(percent_vec[i] > 0) 
         {
@@ -177,11 +197,11 @@ double averageCalc(Image *imgIn, double *percent_vec, int n)
 
 
 
-double standardDeviation(Image *imgIn, double *percent_vec, double *average, int n) 
+double standardDeviation(Image *img, double *percent_vec, double *average, int n) 
 {
     double dp=0;
 
-    for(int i=0; i <= imgIn->maxVal; ++i)
+    for(int i=0; i <= img->maxVal; ++i)
     {
         if(percent_vec[i] > 0)
             dp += pow((percent_vec[i]-(*average)), 2);
@@ -194,39 +214,41 @@ double standardDeviation(Image *imgIn, double *percent_vec, double *average, int
 
 
 
-void analyzeFrequency(Image *imgIn, double *percent_vec, double *average, double *stand_dev) 
+void analyzeFrequency(Image *img, double *percent_vec, double *average, double *stand_dev) 
 {    
     int total=0;
 
     // Contagem dos pixels da imagem
-    for(int i=0; i<=imgIn->maxVal; i++)
+    for(int i=0; i<=img->maxVal; i++)
         percent_vec[i] = 0;
 
-    for(int i = 0; i < imgIn->height * imgIn->width; i++) 
-    {
-        percent_vec[(int)imgIn->pixel[i]]++;
-        if(percent_vec[(int)imgIn->pixel[i]] > 0)
-            total++;
-    }
+    for(int i = 0; i < img->height; ++i)
+        for (int j = 0; j < img->width; ++j)
+        {
+            percent_vec[(int)img->pixel[i][j]]++;
+
+            if(percent_vec[(int)img->pixel[i][j]] > 0)
+                total++;
+        }
 
     // Calcula media aritmetica dos valores dos pixels
     printf("\nCalculating average...\n");
     
-    *average = averageCalc(imgIn, percent_vec, total);
+    *average = averageCalc(img, percent_vec, total);
     printf("Done.\n");
 
 
     // Calcula desvio padrao dos valores dos pixels
     printf("\nCalculating standard deviation...\n");
     
-    *stand_dev = standardDeviation(imgIn, percent_vec, average, total);
+    *stand_dev = standardDeviation(img, percent_vec, average, total);
     printf("Done.\n");
 
 
     // Calcula frequencia dos valores dos pixels
     printf("\nCalculating frequency...\n");
 
-    for(int i = 0; i<=imgIn->maxVal; i++)
+    for(int i = 0; i<=img->maxVal; i++)
         percent_vec[i] = (percent_vec[i] / total)*100;
 
     printf("Done.\n");
@@ -244,8 +266,8 @@ void floodFill(Image *img, unsigned int x, unsigned int y, uchar target_tone, uc
     if((x >= 0 && x < img->width) && (y >= 0 && y < img->height))
     {
         // indexa pixel
-        index = ((img->width*y)+x);
-        this_pixel = img->pixel[index];
+        //index = ((img->width*y)+x);
+        this_pixel = img->pixel[y][x];
 
         // se ja estiver colorido com o tom de reposicao, retorna
         if(target_tone == replacement_tone) return;
@@ -253,7 +275,7 @@ void floodFill(Image *img, unsigned int x, unsigned int y, uchar target_tone, uc
         // se o pixel atual nao tem a mesma cor dos outros, retorna
         if(this_pixel != target_tone) return;
         
-        colorPixel(&img->pixel[index], replacement_tone);
+        colorPixel(&img->pixel[y][x], replacement_tone);
     
         floodFill(img, x,  y+1,     target_tone,   replacement_tone); // proximo pixel acima
         floodFill(img, x,  y-1,     target_tone,   replacement_tone); // proximo pixel abaixo
