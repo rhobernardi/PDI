@@ -10,7 +10,7 @@ CMD = RO +90
 
 
 
-all: clean compile
+all: clean compile run
 
 
 compile:

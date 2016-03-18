@@ -140,4 +140,22 @@ void analyzeFrequency(Image *img, double *percent_vec, double *average, double *
 void floodFill(Image *img, unsigned int x, unsigned int y, uchar target_tone, uchar replacement_tone);
 
 
+Image findObject(Image *img);
+
+
+Image MH(Image *img, char direction, int pixels);
+
+
+Image MV(Image *img, char direction, int pixels);
+
+
+Image RO(Image *img, char direction, int angle);
+
+
+Image RH(Image *img, char direction, int angle);
+
+
+Image RV(Image *img, char direction, int angle);
+
+
 #endif

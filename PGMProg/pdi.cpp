@@ -287,3 +287,65 @@ void floodFill(Image *img, unsigned int x, unsigned int y, uchar target_tone, uc
 
     return;
 }
+
+
+
+
+int *findObject(Image *img)
+{
+    int vector[4];
+    
+    for (int i = 0; i < img->width; ++i)
+    {
+        for (int j = 0; j < img->height; ++j)
+        {
+            if(img->pixel[i][j] == 0)
+                
+        }
+    }
+}
+
+
+
+
+
+Image MH(Image *img, char direction, int pixels)
+{
+
+}
+
+
+
+
+
+Image MV(Image *img, char direction, int pixels)
+{
+
+}
+
+
+
+
+
+Image RO(Image *img, char direction, int angle)
+{
+
+}
+
+
+
+
+
+Image RH(Image *img, char direction, int angle)
+{
+
+}
+
+
+
+
+
+Image RV(Image *img, char direction, int angle)
+{
+
+}
