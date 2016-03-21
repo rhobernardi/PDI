@@ -11,5 +11,10 @@ Para rodar o programa:
 	
 	$ make run
 
+ou
 
-Nota: Caso queira mudar o nome do arquivo de entrada, abra o Makefile e altere a variavel 'IN' no inicio do Makefile para o nome do arquivo de imagem que desejar.
+	$ ./tarefa4 tartaruga.pgm <comando_de_entrada>
+
+Nota: Caso queira mudar o comando para manusear a tartaruga pelo Makefile, abra o Makefile e altere a variavel 'CMD' no inicio do arquivo para que o programa seja executado com o comando desejado. Segue um exemplo:
+
+	CMD = MH +90

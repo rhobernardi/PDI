@@ -18,6 +18,8 @@
 #include <math.h>
 
 #include <iostream>
+#include <sstream>
+#include <string>
 using namespace std;
 
 
@@ -147,22 +149,25 @@ void floodFill(Image *img, unsigned int x, unsigned int y, uchar target_tone, uc
 void transposeImage (Image *img);
 
 
+int stringToInteger(string str);
+
+
 unsigned char **findObject(Image *img);
 
 
-Image MH(Image *img, char direction, int pixels);
+void MH(Image *img, char direction, int pixels);
 
 
-Image MV(Image *img, char direction, int pixels);
+void MV(Image *img, char direction, int pixels);
 
 
-Image RO(Image *img, char direction, int angle);
+void RO(Image *img, char direction, int angl);
 
 
-Image RH(Image *imgIn, Image *);
+void RH(Image *imgIn, Image *);
 
 
-Image RV(Image *img);
+void RV(Image *img);
 
 
 #endif

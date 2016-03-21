@@ -310,9 +310,21 @@ void transposeImage (Image *img)
 
 
 
+int stringToInteger(string str)
+{
+    istringstream iss(str);
+    int retorno;
+    iss >> retorno;
+    return retorno;
+}
+
+
+
+
+
 unsigned char **findObject (Image *img, int *obj_pos)
 {
-    uchar **obj, color = 200;
+    uchar **obj, color = 255;
 
     obj_pos[0] = -1; // linha de inicio
     obj_pos[1] = -1; // linha de fim
@@ -408,19 +420,19 @@ unsigned char **findObject (Image *img, int *obj_pos)
 
     cout << "\n\n5- k: " << k << "\nAux: " << " " << obj_pos[0] << " " << obj_pos[1] << " " << obj_pos[2] << " " << obj_pos[3] << endl;
 
-    for (int i = obj_pos[2]; i <= obj_pos[3]+1; ++i)
-    {
-        img->pixel[i][obj_pos[0]-1] = 150;
-        img->pixel[i][obj_pos[1]+1] = 150;
-    }
+    // for (int i = obj_pos[2]; i <= obj_pos[3]+1; ++i)
+    // {
+    //     img->pixel[i][obj_pos[0]-1] = 150;
+    //     img->pixel[i][obj_pos[1]+1] = 150;
+    // }
 
-    for (int j = obj_pos[0]; j <= obj_pos[1]+1; ++j)
-    {
-        img->pixel[obj_pos[2]-1][j] = 150;
-        img->pixel[obj_pos[3]+1][j] = 150;
-    }
+    // for (int j = obj_pos[0]; j <= obj_pos[1]+1; ++j)
+    // {
+    //     img->pixel[obj_pos[2]-1][j] = 150;
+    //     img->pixel[obj_pos[3]+1][j] = 150;
+    // }
 
-    saveImage(img, "obj_marked.pgm");
+    //saveImage(img, "obj_marked.pgm");
 
     int h = obj_pos[1]-obj_pos[0]+2;
     obj = (uchar **) malloc (h * sizeof(uchar *));
@@ -455,48 +467,140 @@ unsigned char **findObject (Image *img, int *obj_pos)
 
 
 
-Image MH (Image *img, char direction, int pixels)
-{
-
-}
-
-
-
-
-
-Image MV (Image *img, char direction, int pixels)
-{
-
-}
-
-
-
-
-
-Image RO (Image *img, char direction, int angle)
-{
-
-}
-
-
-
-
-
-Image RH (Image *imgIn, Image *imgOut)
+void MH (Image *img, char direction, int pixels)
 {
     uchar **obj;
-    int *pos;
+    int *pos = (int *) malloc (4 * sizeof(int));
+
+    obj = findObject(img, pos);
+
+    cout << "vector pos: " << pos[0] <<  " " << pos[1] << " " << pos[2] << " " << pos[3] << endl;
+
+    if (direction == '+')
+    {
+        if (obj != NULL)
+        {
+            printf("Moving to the right...\n");
+            // apaga imagem anterior
+            for (int i = pos[2]; i < pos[3]; ++i)
+                for (int j = pos[0]; j < pos[1]; ++j)
+                    img->pixel[i][j] = 255;
+
+            // reescreve imagem
+            for (int i = pos[2]; i < pos[3]; ++i)
+                for (int j = pos[0]; j < pos[1]; ++j)
+                    img->pixel[i][j+pixels] = obj[i-pos[2]][j-pos[0]];
+        }
+    }
+
+    else if (direction == '-')
+    {
+        if (obj != NULL)
+        {
+            printf("Moving to the left...\n");
+            // apaga imagem anterior
+            for (int i = pos[2]; i < pos[3]; ++i)
+                for (int j = pos[0]; j < pos[1]; ++j)
+                    img->pixel[i][j] = 255;
+
+            // reescreve imagem
+            for (int i = pos[2]; i < pos[3]; ++i)
+                for (int j = pos[0]; j < pos[1]; ++j)
+                    img->pixel[i][j-pixels] = obj[i-pos[2]][j-pos[0]];
+        }
+    }
+
+    else return;
+}
+
+
+
+
+
+void MV (Image *img, char direction, int pixels)
+{
+    uchar **obj;
+    int *pos = (int *) malloc (4 * sizeof(int));
+
+    obj = findObject(img, pos);
+
+    cout << "vector pos: " << pos[0] <<  " " << pos[1] << " " << pos[2] << " " << pos[3] << endl;
+
+    if (direction == '+')
+    {
+        if (obj != NULL)
+        {
+            // apaga imagem anterior
+            for (int i = pos[2]; i < pos[3]; ++i)
+                for (int j = pos[0]; j < pos[1]; ++j)
+                    img->pixel[i][j] = 255;
+
+            // reescreve imagem
+            for (int i = pos[2]; i < pos[3]; ++i)
+                for (int j = pos[0]; j < pos[1]; ++j)
+                    img->pixel[i-pixels][j] = obj[i-pos[2]][j-pos[0]];
+        }
+    }
+
+    else if (direction == '-')
+    {
+        if (obj != NULL)
+        {
+            // apaga imagem anterior
+            for (int i = pos[2]; i < pos[3]; ++i)
+                for (int j = pos[0]; j < pos[1]; ++j)
+                    img->pixel[i][j] = 255;
+
+            // reescreve imagem
+            for (int i = pos[2]; i < pos[3]; ++i)
+                for (int j = pos[0]; j < pos[1]; ++j)
+                    img->pixel[i+pixels][j] = obj[i-pos[2]][j-pos[0]];
+        }
+    }
+
+    else return;
+}
+
+
+
+
+
+void RO (Image *img, char direction, int angle)
+{
+
+}
+
+
+
+
+
+void RH (Image *imgIn, Image *imgOut)
+{
+    uchar **obj;
+    int *pos = (int *) malloc (4 * sizeof(int));
 
     obj = findObject(imgIn, pos);
 
+    cout << "vector pos: " << pos[0] <<  " " << pos[1] << " " << pos[2] << " " << pos[3] << endl;
 
+
+    if (obj != NULL)
+    {
+        for (int i = pos[2]; i < pos[3]; ++i)
+        {
+            for (int j = pos[0]; j < pos[1]; ++j)
+            {
+                imgOut->pixel[i][j] = obj[i-pos[2]][j-pos[0]];
+            }
+        }
+    }
 }
 
 
 
 
 
-Image RV (Image *img)
+void RV (Image *img)
 {
 
 }

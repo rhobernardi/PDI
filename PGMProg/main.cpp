@@ -58,28 +58,25 @@ int main(int argc, char const *argv[])
 
         //saveImage(&imgOut, output);
 
-        int direction, angl[4], *npixels;
+        char direction;
+        int angl, npixels;
 
-        direction = (int)complement[0];
-        angl[0] = (int)complement[1];
-        angl[1] = (int)complement[2];
-        angl[2] = (int)complement[3];
+        direction = complement[0];
+        npixels = stringToInteger(complement);
+        angl = stringToInteger(complement);
 
-        cout << "Op: " << operation << "  Direction: " << direction << "  Angle: " << angl[0] << endl;
+
+        cout << "Op: " << operation << "  Direction: " << direction << "  Angle: " << angl << endl;
 
         if(!strcmp(operation, "MH"))
         {
-            //MH(&imgOut, direction, npixels);
+            MH(&imgOut, direction, npixels);
             printf("MH FUNCTION\n");
         }
 
         else if(!strcmp(operation, "MV"))
         {
-            // printf("Moving %d pixels to the right...\n");
-            // printf("Moving %d pixels to the left...\n");
-            // printf("Moving %d pixels up...\n");
-            // printf("Moving %d pixels down...\n");
-            //MV(&imgOut, direction, npixels);
+            MV(&imgOut, direction, npixels);
             printf("MV FUNCTION DONE\n");
         }
 
@@ -93,7 +90,7 @@ int main(int argc, char const *argv[])
         else if(!strcmp(operation, "RH"))
         {
             //printf("Reflexing...\n");
-            RH(&imgIn, &imgOut);
+            //RH(&imgIn, &imgOut);
             printf("RH FUNCTION DONE\n");
         }
 
@@ -107,7 +104,7 @@ int main(int argc, char const *argv[])
         else printf("== ERROR. INVALID OPERATION. USE \"MH\", \"MV\", \"RO\", \"RH\" OR \"RV\".\n");
 
 
-        //saveImage(&imgOut, output);
+        saveImage(&imgOut, output);
         printf("Done.\n");
 
 
