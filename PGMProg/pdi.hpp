@@ -159,7 +159,7 @@ Image MV(Image *img, char direction, int pixels);
 Image RO(Image *img, char direction, int angle);
 
 
-Image RH(Image *img);
+Image RH(Image *imgIn, Image *);
 
 
 Image RV(Image *img);

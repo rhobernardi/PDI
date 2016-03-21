@@ -297,7 +297,7 @@ void transposeImage (Image *img)
     int aux;
 
     for (int i = 0; i < img->height; ++i)
-        for (int j = i+1; j < width; ++j)
+        for (int j = i+1; j < img->width; ++j)
             if (j != i)
             {
                 aux = img->pixel[i][j];
@@ -310,41 +310,143 @@ void transposeImage (Image *img)
 
 
 
-unsigned char **findObject (Image *img)
+unsigned char **findObject (Image *img, int *obj_pos)
 {
-    uchar **obj;
-    int aux[4];
+    uchar **obj, color = 200;
 
-    aux[0] = -1; // linha de inicio
-    aux[1] = -1; // linha de fim
-    aux[2] = -1; // coluna de inicio
-    aux[3] = -1; // coluna de fim
+    obj_pos[0] = -1; // linha de inicio
+    obj_pos[1] = -1; // linha de fim
+    obj_pos[2] = -1; // coluna de inicio
+    obj_pos[3] = -1; // coluna de fim
     
-    k = 0;
+    int k = 0;
+
+    cout << "\n\n1- k: " << k << "\nAux: " << " " << obj_pos[0] << " " << obj_pos[1] << " " << obj_pos[2] << " " << obj_pos[3] << endl;
 
     // marca inicio e fim do objeto na imagem no vetor auxiliar
+    // -> extremo norte
     for (int i = 0; i < img->height; ++i)
     {
         for (int j = 0; j < img->width; ++j)
         {
-            if (img->pixel[i][j] == 0 && aux[k] == -1)
+            if (img->pixel[i][j] < color && obj_pos[0] < 0)
             {
-                aux[k] = i;
-                ++k;
+                obj_pos[0] = i;
                 break;
             }
-
         }
-    }
 
-    // copia o objeto em uma submatriz e retorna o objeto;
-    for (int i = aux[2]; i < aux[3]; ++i)
-    {
-        for (int j = aux[0]; j < aux[1]; ++j)
+        if (obj_pos[0] != -1)
         {
-            obj[i][j] = img->pixel[i][j];
+            ++k;
+            break;
         }
     }
+
+    cout << "\n\n2- k: " << k << "\nAux: " << " " << obj_pos[0] << " " << obj_pos[1] << " " << obj_pos[2] << " " << obj_pos[3] << endl;
+
+    // -> extremo sul
+    for (int i = img->height-1; i >= 0; --i)
+    {
+        for (int j = img->width-1; j >= 0; --j)
+        {
+            if (img->pixel[i][j] < color && obj_pos[1] == -1)
+            {
+                obj_pos[1] = i;
+                break;
+            }
+        }
+
+        if (obj_pos[1] != -1)
+        {
+            ++k;
+            break;
+        }
+    }
+
+    cout << "\n\n3- k: " << k << "\nAux: " << " " << obj_pos[0] << " " << obj_pos[1] << " " << obj_pos[2] << " " << obj_pos[3] << endl;
+
+    // -> extrema esquerda
+    for (int i = 0; i < img->width; ++i)
+    {
+        for (int j = 0; j < img->height; ++j)
+        {
+            if (img->pixel[i][j] < color && obj_pos[2] == -1)
+            {
+                obj_pos[2] = i;
+                break;
+            }
+        }
+
+        if (obj_pos[2] != -1)
+        {
+            ++k;
+            break;
+        }
+    }
+
+    cout << "\n\n4- k: " << k << "\nAux: " << " " << obj_pos[0] << " " << obj_pos[1] << " " << obj_pos[2] << " " << obj_pos[3] << endl;
+
+    // -> extrema direita
+    for (int i = img->width-1; i >= 0; --i)
+    {
+        for (int j = img->height-1; j >= 0; --j)
+        {
+            if (img->pixel[i][j] < color && obj_pos[3] == -1)
+            {
+                obj_pos[3] = i;
+                break;
+            }
+        }
+
+        if (obj_pos[3] != -1)
+        {
+            ++k;
+            break;
+        }
+    }    
+
+    cout << "\n\n5- k: " << k << "\nAux: " << " " << obj_pos[0] << " " << obj_pos[1] << " " << obj_pos[2] << " " << obj_pos[3] << endl;
+
+    for (int i = obj_pos[2]; i <= obj_pos[3]+1; ++i)
+    {
+        img->pixel[i][obj_pos[0]-1] = 150;
+        img->pixel[i][obj_pos[1]+1] = 150;
+    }
+
+    for (int j = obj_pos[0]; j <= obj_pos[1]+1; ++j)
+    {
+        img->pixel[obj_pos[2]-1][j] = 150;
+        img->pixel[obj_pos[3]+1][j] = 150;
+    }
+
+    saveImage(img, "obj_marked.pgm");
+
+    int h = obj_pos[1]-obj_pos[0]+2;
+    obj = (uchar **) malloc (h * sizeof(uchar *));
+
+
+    int w = obj_pos[3]-obj_pos[2]+2;
+    for (int i = 0; i <= h; ++i)
+        obj[i] = (uchar *) malloc (w * sizeof(uchar));
+
+    
+    int count = 0;
+
+    //copia o objeto em uma submatriz e retorna o objeto;
+    if (obj != NULL)
+    {
+        for (int i = obj_pos[2]; i < obj_pos[3]; ++i)
+        {
+            for (int j = obj_pos[0]; j < obj_pos[1]; ++j)
+            {
+                obj[i-obj_pos[2]][j-obj_pos[0]] = img->pixel[i][j];
+            }
+        }
+    }
+
+    cout << "\n\nFINAL- count: " << count << " h: " << h << " w: " << w << " k: " << k 
+    << "\nAux: " << " " << obj_pos[0] << " " << obj_pos[1] << " " << obj_pos[2] << " " << obj_pos[3] << endl;
 
     return obj;
 }
@@ -380,8 +482,13 @@ Image RO (Image *img, char direction, int angle)
 
 
 
-Image RH (Image *img)
+Image RH (Image *imgIn, Image *imgOut)
 {
+    uchar **obj;
+    int *pos;
+
+    obj = findObject(imgIn, pos);
+
 
 }
 

@@ -47,6 +47,17 @@ int main(int argc, char const *argv[])
     {
         copyImage(&imgIn, &imgOut); 
 
+        // for (int i = 0; i < imgOut.height; ++i)
+        // {
+        //     for (int j = 0; j < imgOut.width; ++j)
+        //     {
+        //         if(imgOut.pixel[i][j] != 255 && imgOut.pixel[i][j] != 0)
+        //             imgOut.pixel[i][j] = 0;
+        //     }
+        // }
+
+        //saveImage(&imgOut, output);
+
         int direction, angl[4], *npixels;
 
         direction = (int)complement[0];
@@ -82,21 +93,21 @@ int main(int argc, char const *argv[])
         else if(!strcmp(operation, "RH"))
         {
             //printf("Reflexing...\n");
-            RH(&imgOut);
+            RH(&imgIn, &imgOut);
             printf("RH FUNCTION DONE\n");
         }
 
         else if(!strcmp(operation, "RV"))
         {
             //printf("Reflexing...\n");
-            RV(&imgOut);
+            //RV(&imgOut);
             printf("RV FUNCTION DONE\n");
         }
 
         else printf("== ERROR. INVALID OPERATION. USE \"MH\", \"MV\", \"RO\", \"RH\" OR \"RV\".\n");
 
 
-        saveImage(&imgOut, output);
+        //saveImage(&imgOut, output);
         printf("Done.\n");
 
 

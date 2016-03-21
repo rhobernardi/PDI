@@ -3,10 +3,10 @@ CC = pdi.cpp main.cpp
 BIN = tarefa4
 PZIP = 8066395_Tarefa3.zip
 
-IN = image.pgm
+IN = tartaruga.pgm
 OUT = img_out.pgm
 
-CMD = RO +90
+CMD = RH +90
 
 
 
