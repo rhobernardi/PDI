@@ -147,7 +147,7 @@ void floodFill(Image *img, unsigned int x, unsigned int y, uchar target_tone, uc
 void transposeImage (Image *img);
 
 
-unsigned int **findObject(Image *img);
+unsigned char **findObject(Image *img);
 
 
 Image MH(Image *img, char direction, int pixels);

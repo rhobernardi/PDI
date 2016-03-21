@@ -333,6 +333,7 @@ unsigned char **findObject (Image *img)
                 ++k;
                 break;
             }
+
         }
     }
 

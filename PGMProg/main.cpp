@@ -69,28 +69,28 @@ int main(int argc, char const *argv[])
             // printf("Moving %d pixels up...\n");
             // printf("Moving %d pixels down...\n");
             //MV(&imgOut, direction, npixels);
-            printf("MV FUNCTION\n");
+            printf("MV FUNCTION DONE\n");
         }
 
         else if(!strcmp(operation, "RO"))
         {
             //printf("Rotating %d degrees...\n");
             //RO(&imgOut, direction, angl);
-            printf("RO FUNCTION\n");
+            printf("RO FUNCTION DONE\n");
         }
 
         else if(!strcmp(operation, "RH"))
         {
             //printf("Reflexing...\n");
             RH(&imgOut);
-            printf("RH FUNCTION\n");
+            printf("RH FUNCTION DONE\n");
         }
 
         else if(!strcmp(operation, "RV"))
         {
             //printf("Reflexing...\n");
             RV(&imgOut);
-            printf("RV FUNCTION\n");
+            printf("RV FUNCTION DONE\n");
         }
 
         else printf("== ERROR. INVALID OPERATION. USE \"MH\", \"MV\", \"RO\", \"RH\" OR \"RV\".\n");
