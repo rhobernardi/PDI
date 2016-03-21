@@ -12,7 +12,7 @@
 
 
 
-void allocData(Image *img, char* type, int width, int height, int maxVal) 
+void allocData (Image *img, char* type, int width, int height, int maxVal) 
 {
     strcpy(img->type, type);
     img->width = width;
@@ -34,7 +34,7 @@ void allocData(Image *img, char* type, int width, int height, int maxVal)
 
 
 
-void freeData(Image *img) 
+void freeData (Image *img) 
 {    
     if (img->type[0] == 'P' && img->type[1] == '2') 
     {
@@ -51,7 +51,7 @@ void freeData(Image *img)
 
 
 
-void readImage(Image *imgIn, Image *imgOut, char *in) 
+void readImage (Image *imgIn, Image *imgOut, char *in) 
 {
     FILE *input;
     char type[3];
@@ -111,7 +111,7 @@ void readImage(Image *imgIn, Image *imgOut, char *in)
 
 
 
-void saveImage(Image *img, const char *out) 
+void saveImage (Image *img, const char *out) 
 {
     FILE *output;
 
@@ -142,7 +142,7 @@ void saveImage(Image *img, const char *out)
 
 
 
-void copyImage(Image *imgIn, Image *imgOut)
+void copyImage (Image *imgIn, Image *imgOut)
 {
     for(int i = 0; i < imgIn->height; ++i)
         for (int j = 0; j < imgIn->width; ++j)
@@ -155,7 +155,7 @@ void copyImage(Image *imgIn, Image *imgOut)
 
 
 
-void colorPixel(uchar *pixel, uchar tone)
+void colorPixel (uchar *pixel, uchar tone)
 {
     (*pixel) = tone;
 }
@@ -164,7 +164,7 @@ void colorPixel(uchar *pixel, uchar tone)
 
 
 
-void processInversion(Image *imgIn, Image *imgOut)
+void processInversion (Image *imgIn, Image *imgOut)
 {
     for (int i = 0; i < imgIn->height; ++i) 
         for (int j = 0; j < imgIn->width; ++j)
@@ -178,7 +178,7 @@ void processInversion(Image *imgIn, Image *imgOut)
 
 
 
-double averageCalc(Image *img, double *percent_vec, int n)
+double averageCalc (Image *img, double *percent_vec, int n)
 {    
     double sum=0;
     
@@ -197,7 +197,7 @@ double averageCalc(Image *img, double *percent_vec, int n)
 
 
 
-double standardDeviation(Image *img, double *percent_vec, double *average, int n) 
+double standardDeviation (Image *img, double *percent_vec, double *average, int n) 
 {
     double dp=0;
 
@@ -214,7 +214,7 @@ double standardDeviation(Image *img, double *percent_vec, double *average, int n
 
 
 
-void analyzeFrequency(Image *img, double *percent_vec, double *average, double *stand_dev) 
+void analyzeFrequency (Image *img, double *percent_vec, double *average, double *stand_dev) 
 {    
     int total=0;
 
@@ -258,7 +258,7 @@ void analyzeFrequency(Image *img, double *percent_vec, double *average, double *
 
 
 
-void floodFill(Image *img, unsigned int x, unsigned int y, uchar target_tone, uchar replacement_tone)
+void floodFill (Image *img, unsigned int x, unsigned int y, uchar target_tone, uchar replacement_tone)
 {
     unsigned int index; uchar this_pixel;
 
@@ -291,25 +291,68 @@ void floodFill(Image *img, unsigned int x, unsigned int y, uchar target_tone, uc
 
 
 
-int *findObject(Image *img)
+
+void transposeImage (Image *img)
 {
-    int vector[4];
+    int aux;
+
+    for (int i = 0; i < img->height; ++i)
+        for (int j = i+1; j < width; ++j)
+            if (j != i)
+            {
+                aux = img->pixel[i][j];
+                img->pixel[i][j] = img->pixel[j][i];
+                img->pixel[j][i] = aux;
+            }
+}
+
+
+
+
+
+unsigned char **findObject (Image *img)
+{
+    uchar **obj;
+    int aux[4];
+
+    aux[0] = -1; // linha de inicio
+    aux[1] = -1; // linha de fim
+    aux[2] = -1; // coluna de inicio
+    aux[3] = -1; // coluna de fim
     
-    for (int i = 0; i < img->width; ++i)
+    k = 0;
+
+    // marca inicio e fim do objeto na imagem no vetor auxiliar
+    for (int i = 0; i < img->height; ++i)
     {
-        for (int j = 0; j < img->height; ++j)
+        for (int j = 0; j < img->width; ++j)
         {
-            if(img->pixel[i][j] == 0)
-                
+            if (img->pixel[i][j] == 0 && aux[k] == -1)
+            {
+                aux[k] = i;
+                ++k;
+                break;
+            }
         }
     }
+
+    // copia o objeto em uma submatriz e retorna o objeto;
+    for (int i = aux[2]; i < aux[3]; ++i)
+    {
+        for (int j = aux[0]; j < aux[1]; ++j)
+        {
+            obj[i][j] = img->pixel[i][j];
+        }
+    }
+
+    return obj;
 }
 
 
 
 
 
-Image MH(Image *img, char direction, int pixels)
+Image MH (Image *img, char direction, int pixels)
 {
 
 }
@@ -318,7 +361,7 @@ Image MH(Image *img, char direction, int pixels)
 
 
 
-Image MV(Image *img, char direction, int pixels)
+Image MV (Image *img, char direction, int pixels)
 {
 
 }
@@ -327,7 +370,7 @@ Image MV(Image *img, char direction, int pixels)
 
 
 
-Image RO(Image *img, char direction, int angle)
+Image RO (Image *img, char direction, int angle)
 {
 
 }
@@ -336,7 +379,7 @@ Image RO(Image *img, char direction, int angle)
 
 
 
-Image RH(Image *img, char direction, int angle)
+Image RH (Image *img)
 {
 
 }
@@ -345,7 +388,7 @@ Image RH(Image *img, char direction, int angle)
 
 
 
-Image RV(Image *img, char direction, int angle)
+Image RV (Image *img)
 {
 
 }

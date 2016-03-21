@@ -45,50 +45,51 @@ int main(int argc, char const *argv[])
     // Execucao do programa para imagens em escala de cinza (PGM)
     if (imgIn.type[0] == 'P' && imgIn.type[1] == '2')
     {
-        imgOut = findObject(&imgIn);
+        copyImage(&imgIn, &imgOut); 
 
-        char direction, angl[3];
+        int direction, angl[4], *npixels;
 
-        direction = complement[0];
+        direction = (int)complement[0];
+        angl[0] = (int)complement[1];
+        angl[1] = (int)complement[2];
+        angl[2] = (int)complement[3];
 
-        angl[0] = complement[1];
-        angl[1] = complement[2];
-        angl[2] = complement[3];
-
-        cout << "Op: " << operation << "  Direction: " << direction << "  Angle: " << angl << endl;
+        cout << "Op: " << operation << "  Direction: " << direction << "  Angle: " << angl[0] << endl;
 
         if(!strcmp(operation, "MH"))
         {
-            printf("Moving...\n");
-            //MH();
+            //MH(&imgOut, direction, npixels);
             printf("MH FUNCTION\n");
         }
 
         else if(!strcmp(operation, "MV"))
         {
-            printf("Moving...\n");
-            //MV();
+            // printf("Moving %d pixels to the right...\n");
+            // printf("Moving %d pixels to the left...\n");
+            // printf("Moving %d pixels up...\n");
+            // printf("Moving %d pixels down...\n");
+            //MV(&imgOut, direction, npixels);
             printf("MV FUNCTION\n");
         }
 
         else if(!strcmp(operation, "RO"))
         {
-            printf("Rotating...\n");
-            //RO();
+            //printf("Rotating %d degrees...\n");
+            //RO(&imgOut, direction, angl);
             printf("RO FUNCTION\n");
         }
 
         else if(!strcmp(operation, "RH"))
         {
-            printf("Rotating...\n");
-            //RH();
+            //printf("Reflexing...\n");
+            RH(&imgOut);
             printf("RH FUNCTION\n");
         }
 
         else if(!strcmp(operation, "RV"))
         {
-            printf("Rotating...\n");
-            //RV();
+            //printf("Reflexing...\n");
+            RV(&imgOut);
             printf("RV FUNCTION\n");
         }
 
