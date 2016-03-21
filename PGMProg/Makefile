@@ -33,5 +33,6 @@ run: compile
 	
 push:
 	git add *
+	git status
 	git commit -m "Tarefa 4 em andamento"
 	git push
