@@ -6,7 +6,7 @@ PZIP = 8066395_Tarefa3.zip
 IN = tartaruga.pgm
 OUT = img_out.pgm
 
-CMD = MH -40
+CMD = MH +90
 
 
 
@@ -23,6 +23,7 @@ clean:
 	@find -name "*~" | xargs rm -rf
 	@find -name $(BIN) | xargs rm -rf
 	@find -name $(OUT) | xargs rm -rf
+	@find -name obj_marked.pgm | xargs rm -rf
 
 zip: clean
 	@rm -f $(PZIP)

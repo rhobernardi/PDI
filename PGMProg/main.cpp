@@ -12,17 +12,10 @@
 
 
 /**
- * Procurar objeto na imagem
- * Executar comando
- */
-
-
-
-/**
  * Funcao Main
  * 
  * @param  argc     -
- * @param  argv     Nome do arquivo de imagem de entrada
+ * @param  argv     Nome do arquivo de imagem de entrada e comando
  * @return          0
  */
 int main(int argc, char const *argv[]) 
@@ -54,47 +47,44 @@ int main(int argc, char const *argv[])
         npixels = stringToInteger(complement);
         angl = stringToInteger(complement);
 
-        cout << "Op: " << operation << "  Direction: " << direction << "  Angle: " << angl << endl;
+        cout << "Op: " << operation << "  Value: " << npixels << endl;
 
-       // if(direction == '+' || direction == '-')
-        //{
-            if(!strcmp(operation, "MH"))
-            {
-                MH(&imgOut, direction, npixels);
-                printf("MH FUNCTION\n");
-            }
+        
 
-            else if(!strcmp(operation, "MV"))
-            {
-                MV(&imgOut, direction, npixels);
-                printf("MV FUNCTION DONE\n");
-            }
+        if(!strcmp(operation, "MH"))
+        {
+            MH(&imgOut, direction, npixels);
+            printf("MH FUNCTION\n");
+        }
 
-            else if(!strcmp(operation, "RO"))
-            {
-                //printf("Rotating %d degrees...\n");
-                //RO(&imgOut, direction, angl);
-                printf("RO FUNCTION DONE\n");
-            }
+        else if(!strcmp(operation, "MV"))
+        {
+            MV(&imgOut, direction, npixels);
+            printf("MV FUNCTION DONE\n");
+        }
 
-            else if(!strcmp(operation, "RH"))
-            {
-                //printf("Reflexing...\n");
-                //RH(&imgIn, &imgOut);
-                printf("RH FUNCTION DONE\n");
-            }
+        else if(!strcmp(operation, "RO"))
+        {
+            //printf("Rotating %d degrees...\n");
+            //RO(&imgOut, direction, angl);
+            printf("RO FUNCTION DONE\n");
+        }
 
-            else if(!strcmp(operation, "RV"))
-            {
-                //printf("Reflexing...\n");
-                //RV(&imgOut);
-                printf("RV FUNCTION DONE\n");
-            }
+        else if(!strcmp(operation, "RH"))
+        {
+            //printf("Reflexing...\n");
+            //RH(&imgIn, &imgOut);
+            printf("RH FUNCTION DONE\n");
+        }
 
-            else printf("== ERROR. INVALID OPERATION. USE \"MH\", \"MV\", \"RO\", \"RH\" OR \"RV\".\n");
-        //}
+        else if(!strcmp(operation, "RV"))
+        {
+            //printf("Reflexing...\n");
+            //RV(&imgOut);
+            printf("RV FUNCTION DONE\n");
+        }
 
-        //else printf("\n== ERROR. INVALID DIRECTION.\n\n");
+        else printf("== ERROR. INVALID OPERATION. USE \"MH\", \"MV\", \"RO\", \"RH\" OR \"RV\".\n");
 
         saveImage(&imgOut, output);
         printf("Done.\n");
