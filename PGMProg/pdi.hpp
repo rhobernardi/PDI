@@ -160,13 +160,13 @@ int stringToInteger(string str);
 unsigned char **findObject(Image *img);
 
 
-void MH(Image *img, char direction, int pixels);
+void MH(Image *img, int pixels);
 
 
-void MV(Image *img, char direction, int pixels);
+void MV(Image *img, int pixels);
 
 
-void RO(Image *img, char direction, int angl);
+void RO(Image *img, int angl);
 
 
 void RH(Image *imgIn, Image *);

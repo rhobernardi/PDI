@@ -49,17 +49,15 @@ int main(int argc, char const *argv[])
 
         cout << "\nOp: " << operation << "  Value: " << npixels << endl;
 
-
-
         if(!strcmp(operation, "MH"))
         {
-            MH(&imgOut, direction, npixels);
+            MH(&imgOut, npixels);
             printf("MH FUNCTION\n");
         }
 
         else if(!strcmp(operation, "MV"))
         {
-            MV(&imgOut, direction, npixels);
+            MV(&imgOut, npixels);
             printf("MV FUNCTION DONE\n");
         }
 
