@@ -31,7 +31,7 @@ zip: clean
 run: compile
 	./$(BIN) $(IN) $(CMD)
 	
-push:
+push: clean
 	git add *
 	git status
 	git commit -m "Tarefa 4 em andamento"
