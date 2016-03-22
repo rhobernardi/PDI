@@ -476,9 +476,9 @@ void MH (Image *img, char direction, int pixels)
 
     cout << "vector pos: " << pos[0] <<  " " << pos[1] << " " << pos[2] << " " << pos[3] << endl;
 
-    if (direction == '+')
+    if (direction == '+' && obj != NULL)
     {
-        if (obj != NULL)
+        if (pos[3]+pixels <= img->height)
         {
             printf("Moving to the right...\n");
             // apaga imagem anterior
@@ -493,9 +493,9 @@ void MH (Image *img, char direction, int pixels)
         }
     }
 
-    else if (direction == '-')
+    else if (direction == '-' && obj != NULL)
     {
-        if (obj != NULL)
+        if (pos[2]%-pixels >= 0)
         {
             printf("Moving to the left...\n");
             // apaga imagem anterior
@@ -510,7 +510,9 @@ void MH (Image *img, char direction, int pixels)
         }
     }
 
-    else return;
+    else printf("== ERROR. CAN'T MOVE THE TURTLE BEYOND THE IMAGE SIZE.\n");
+
+    return;
 }
 
 
@@ -526,9 +528,9 @@ void MV (Image *img, char direction, int pixels)
 
     cout << "vector pos: " << pos[0] <<  " " << pos[1] << " " << pos[2] << " " << pos[3] << endl;
 
-    if (direction == '+')
+    if (direction == '+' && obj != NULL)
     {
-        if (obj != NULL)
+        if (pos[0]-pixels >= 0)
         {
             // apaga imagem anterior
             for (int i = pos[2]; i < pos[3]; ++i)
@@ -542,9 +544,9 @@ void MV (Image *img, char direction, int pixels)
         }
     }
 
-    else if (direction == '-')
+    else if (direction == '-' && obj != NULL)
     {
-        if (obj != NULL)
+        if (pos[1]+pixels <= img->height)
         {
             // apaga imagem anterior
             for (int i = pos[2]; i < pos[3]; ++i)
@@ -558,7 +560,9 @@ void MV (Image *img, char direction, int pixels)
         }
     }
 
-    else return;
+    else printf("== ERROR. CAN'T MOVE THE TURTLE BEYOND THE IMAGE SIZE.\n");
+
+    return;
 }
 
 
