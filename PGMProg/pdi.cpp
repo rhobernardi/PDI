@@ -330,10 +330,8 @@ unsigned char **findObject (Image *img, int *obj_pos)
     obj_pos[1] = -1; // linha de fim
     obj_pos[2] = -1; // coluna de inicio
     obj_pos[3] = -1; // coluna de fim
-    
-    int k = 0;
 
-    cout << "\n\n1- k: " << k << "\nAux: " << " " << obj_pos[0] << " " << obj_pos[1] << " " << obj_pos[2] << " " << obj_pos[3] << endl;
+    cout << "\n\n1- Aux: " << " " << obj_pos[0] << " " << obj_pos[1] << " " << obj_pos[2] << " " << obj_pos[3] << endl;
 
     // marca inicio e fim do objeto na imagem no vetor auxiliar
     // -> extremo norte
@@ -351,15 +349,7 @@ unsigned char **findObject (Image *img, int *obj_pos)
                 break;
             }
         }
-
-        if (obj_pos[0] != -1)
-        {
-            ++k;
-            break;
-        }
     }
-
-    cout << "\n\n2- k: " << k << "\nAux: " << " " << obj_pos[0] << " " << obj_pos[1] << " " << obj_pos[2] << " " << obj_pos[3] << endl;
 
     // -> extremo sul
     for (int i = img->height-1; i >= 0; --i)
@@ -376,15 +366,7 @@ unsigned char **findObject (Image *img, int *obj_pos)
                 break;
             }
         }
-
-        if (obj_pos[1] != -1)
-        {
-            ++k;
-            break;
-        }
     }
-
-    //cout << "\n\n3- k: " << k << "\nAux: " << " " << obj_pos[0] << " " << obj_pos[1] << " " << obj_pos[2] << " " << obj_pos[3] << endl;
 
     // -> extrema esquerda
     for (int i = 0; i < img->width; ++i)
@@ -401,15 +383,7 @@ unsigned char **findObject (Image *img, int *obj_pos)
                 break;
             }
         }
-
-        if (obj_pos[2] != -1)
-        {
-            ++k;
-            break;
-        }
     }
-
-    //cout << "\n\n4- k: " << k << "\nAux: " << " " << obj_pos[0] << " " << obj_pos[1] << " " << obj_pos[2] << " " << obj_pos[3] << endl;
 
     // -> extrema direita
     for (int i = img->width-1; i >= 0; --i)
@@ -426,15 +400,7 @@ unsigned char **findObject (Image *img, int *obj_pos)
                 break;
             }
         }
-
-        if (obj_pos[3] != -1)
-        {
-            ++k;
-            break;
-        }
     }    
-
-    //cout << "\n\n5- k: " << k << "\nAux: " << " " << obj_pos[0] << " " << obj_pos[1] << " " << obj_pos[2] << " " << obj_pos[3] << endl;
 
     for (int i = obj_pos[2]; i <= obj_pos[3]; ++i)
     {

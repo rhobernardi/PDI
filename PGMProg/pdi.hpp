@@ -148,7 +148,12 @@ void floodFill(Image *img, unsigned int x, unsigned int y, uchar target_tone, uc
  */
 void transposeImage (Image *img);
 
-
+/**
+ * Converte numero no formato de string para inteiro
+ * 
+ * @param  str 					String de entrada
+ * @return     					Retorna inteiro da string
+ */
 int stringToInteger(string str);
 
 

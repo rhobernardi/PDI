@@ -47,9 +47,9 @@ int main(int argc, char const *argv[])
         npixels = stringToInteger(complement);
         angl = stringToInteger(complement);
 
-        cout << "Op: " << operation << "  Value: " << npixels << endl;
+        cout << "\nOp: " << operation << "  Value: " << npixels << endl;
 
-        
+
 
         if(!strcmp(operation, "MH"))
         {
