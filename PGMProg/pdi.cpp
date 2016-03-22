@@ -420,19 +420,19 @@ unsigned char **findObject (Image *img, int *obj_pos)
 
     cout << "\n\n5- k: " << k << "\nAux: " << " " << obj_pos[0] << " " << obj_pos[1] << " " << obj_pos[2] << " " << obj_pos[3] << endl;
 
-    // for (int i = obj_pos[2]; i <= obj_pos[3]+1; ++i)
-    // {
-    //     img->pixel[i][obj_pos[0]-1] = 150;
-    //     img->pixel[i][obj_pos[1]+1] = 150;
-    // }
+    for (int i = obj_pos[2]; i <= obj_pos[3]+1; ++i)
+    {
+        img->pixel[i][obj_pos[0]] = 150;
+        img->pixel[i][obj_pos[1]] = 150;
+    }
 
-    // for (int j = obj_pos[0]; j <= obj_pos[1]+1; ++j)
-    // {
-    //     img->pixel[obj_pos[2]-1][j] = 150;
-    //     img->pixel[obj_pos[3]+1][j] = 150;
-    // }
+    for (int j = obj_pos[0]; j <= obj_pos[1]+1; ++j)
+    {
+        img->pixel[obj_pos[2]][j] = 150;
+        img->pixel[obj_pos[3]][j] = 150;
+    }
 
-    //saveImage(img, "obj_marked.pgm");
+    saveImage(img, "obj_marked.pgm");
 
     int h = obj_pos[1]-obj_pos[0]+2;
     obj = (uchar **) malloc (h * sizeof(uchar *));
@@ -472,45 +472,60 @@ void MH (Image *img, char direction, int pixels)
     uchar **obj;
     int *pos = (int *) malloc (4 * sizeof(int));
 
-    obj = findObject(img, pos);
+    obj = findObject(img, pos); // retorna o objeto da imagem e um vetor de posicoes
 
+    /**
+     * pos[0] = -1; // linha de inicio
+     * pos[1] = -1; // linha de fim
+     * pos[2] = -1; // coluna de inicio
+     * pos[3] = -1; // coluna de fim
+     */
+    
     cout << "vector pos: " << pos[0] <<  " " << pos[1] << " " << pos[2] << " " << pos[3] << endl;
 
-    if (direction == '+' && obj != NULL)
+    if (obj != NULL)
     {
-        if (pos[3]+pixels <= img->height)
+        if (pos[3]+pixels <= img->width && pos[2]+pixels >= 0)
         {
-            printf("Moving to the right...\n");
+            printf("Moving...\n");
             // apaga imagem anterior
-            for (int i = pos[2]; i < pos[3]; ++i)
-                for (int j = pos[0]; j < pos[1]; ++j)
+            for (int i = pos[0]; i <= pos[1]; ++i)
+                for (int j = pos[2]; j <= pos[3]; ++j)
                     img->pixel[i][j] = 255;
 
             // reescreve imagem
-            for (int i = pos[2]; i < pos[3]; ++i)
-                for (int j = pos[0]; j < pos[1]; ++j)
-                    img->pixel[i][j+pixels] = obj[i-pos[2]][j-pos[0]];
+            for (int i = pos[0]; i <= pos[1]; ++i)
+                for (int j = pos[2]; j <= pos[3]; ++j)
+                    img->pixel[i][j+pixels] = obj[i-pos[0]+2][j-pos[2]+2];
         }
+
+        else printf("== ERROR. CAN'T MOVE THE TURTLE BEYOND THE IMAGE SIZE.\n");
     }
 
-    else if (direction == '-' && obj != NULL)
-    {
-        if (pos[2]%-pixels >= 0)
-        {
-            printf("Moving to the left...\n");
-            // apaga imagem anterior
-            for (int i = pos[2]; i < pos[3]; ++i)
-                for (int j = pos[0]; j < pos[1]; ++j)
-                    img->pixel[i][j] = 255;
+    // else if (obj != NULL)
+    // {
+    //     if (pos[2]+pixels >= 0)
+    //     {
+    //         int s = pos[2]+pixels;
 
-            // reescreve imagem
-            for (int i = pos[2]; i < pos[3]; ++i)
-                for (int j = pos[0]; j < pos[1]; ++j)
-                    img->pixel[i][j-pixels] = obj[i-pos[2]][j-pos[0]];
-        }
-    }
+    //         cout << "==== s: " << s << endl;
 
-    else printf("== ERROR. CAN'T MOVE THE TURTLE BEYOND THE IMAGE SIZE.\n");
+    //         printf("Moving to the left...\n");
+    //         // apaga imagem anterior
+    //         for (int i = pos[2]; i <= pos[3]; ++i)
+    //             for (int j = pos[0]; j <= pos[1]; ++j)
+    //                 img->pixel[i][j] = 255;
+
+    //         // reescreve imagem
+    //         for (int i = pos[0]; i <= pos[1]; ++i)
+    //             for (int j = pos[2]; j <= pos[3]; ++j)
+    //                 img->pixel[i][j+pixels] = obj[i-pos[0]][j-pos[2]];
+    //     }
+
+    //    else printf("== ERROR. CAN'T MOVE THE TURTLE BEYOND THE IMAGE SIZE.\n");
+    // }
+
+    else printf("\n== ERROR. OBJECT NOT FOUND.\n\n");
 
     return;
 }
