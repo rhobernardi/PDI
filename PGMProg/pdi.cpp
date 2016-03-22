@@ -567,11 +567,11 @@ void RH (Image *img)
 
     if (obj != NULL)
     {
-        for (int i = pos[2]; i < pos[3]; ++i)
+        for (int i = pos[2]; i <= pos[3]; ++i)
         {
-            for (int j = pos[0]; j < pos[1]; ++j)
+            for (int j = pos[0]; j <= pos[1]; ++j)
             {
-                imgOut->pixel[i][j] = obj[i-pos[2]][j-pos[0]];
+                img->pixel[i][j] = obj[i-pos[2]][j-pos[0]];
             }
         }
     }

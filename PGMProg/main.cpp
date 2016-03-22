@@ -63,7 +63,6 @@ int main(int argc, char const *argv[])
 
         else if(!strcmp(operation, "RO"))
         {
-            //printf("Rotating %d degrees...\n");
             //RO(&imgOut, direction, angl);
             printf("RO FUNCTION DONE\n");
         }
