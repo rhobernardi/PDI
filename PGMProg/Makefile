@@ -6,7 +6,8 @@ PZIP = 8066395_Tarefa3.zip
 IN = tartaruga.pgm
 OUT = img_out.pgm
 
-CMD = MV -0
+CMD = RV 
+#+20
 
 
 

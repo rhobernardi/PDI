@@ -292,6 +292,17 @@ void floodFill (Image *img, unsigned int x, unsigned int y, uchar target_tone, u
 
 
 
+void eraseAll (Image *img)
+{
+    for (int i = 0; i < img->height; ++i)
+        for (int j = 0; j < img->width; ++j)
+            img->pixel[i][j] = 255;
+}
+
+
+
+
+
 void transposeImage (Image *img)
 {
     int aux;
@@ -402,19 +413,19 @@ unsigned char **findObject (Image *img, int *obj_pos)
         }
     }    
 
-    for (int i = obj_pos[2]; i <= obj_pos[3]; ++i)
-    {
-        img->pixel[i][obj_pos[0]] = 150;
-        img->pixel[i][obj_pos[1]] = 150;
-    }
+    // for (int i = obj_pos[2]; i <= obj_pos[3]; ++i)
+    // {
+    //     img->pixel[i][obj_pos[0]] = 150;
+    //     img->pixel[i][obj_pos[1]] = 150;
+    // }
 
-    for (int j = obj_pos[0]; j <= obj_pos[1]; ++j)
-    {
-        img->pixel[obj_pos[2]][j] = 150;
-        img->pixel[obj_pos[3]][j] = 150;
-    }
+    // for (int j = obj_pos[0]; j <= obj_pos[1]; ++j)
+    // {
+    //     img->pixel[obj_pos[2]][j] = 150;
+    //     img->pixel[obj_pos[3]][j] = 150;
+    // }
 
-    saveImage(img, "obj_marked.pgm");
+    // saveImage(img, "obj_marked.pgm");
 
     if (obj_pos[0] >= 0 && obj_pos[1] >= 0 && obj_pos[2] >= 0 && obj_pos[3] >= 0)
     {
@@ -470,15 +481,9 @@ void MH (Image *img, int pixels)
         if (pos[3]+pixels <= img->width && pos[2]+pixels >= 0)
         {
             printf("Moving...\n");
-            // apaga imagem anterior
-            // for (int i = pos[0]; i <= pos[1]; ++i)
-            //     for (int j = pos[2]; j <= pos[3]; ++j)
-            //         img->pixel[i][j] = 255;
             
             // apaga imagem toda
-            for (int i = 0; i < img->height; ++i)
-                for (int j = 0; j < img->width; ++j)
-                    img->pixel[i][j] = 255;
+            eraseAll(img);
 
             // reescreve objeto de imagem
             for (int i = pos[0]; i <= pos[1]; ++i)
@@ -519,15 +524,9 @@ void MV (Image *img, int pixels)
         if (pos[1]-pixels <= img->height && pos[0]-pixels >= 0)
         {
             printf("Moving...\n");
-            // apaga imagem anterior
-            // for (int i = pos[0]; i <= pos[1]; ++i)
-            //     for (int j = pos[2]; j <= pos[3]; ++j)
-            //         img->pixel[i][j] = 255;
             
             // apaga imagem toda
-            for (int i = 0; i < img->height; ++i)
-                for (int j = 0; j < img->width; ++j)
-                    img->pixel[i][j] = 255;
+            eraseAll(img);
 
             // reescreve objeto de imagem
             for (int i = pos[0]; i <= pos[1]; ++i)
@@ -558,23 +557,60 @@ void RO (Image *img, int angle)
 
 void RH (Image *img)
 {
-    uchar **obj;
-    int pos[4];// = (int *) malloc (4 * sizeof(int));
+    uchar **obj, **obj_aux;
+    int pos[4];
 
-    obj = findObject(img, pos);
+    obj = findObject(img, pos); // retorna o objeto da imagem e um vetor de posicoes
 
-    cout << "vector pos: " << pos[0] <<  " " << pos[1] << " " << pos[2] << " " << pos[3] << endl;
+    /**
+     * pos[0] = -1; // linha de inicio
+     * pos[1] = -1; // linha de fim
+     * pos[2] = -1; // coluna de inicio
+     * pos[3] = -1; // coluna de fim
+     */
+    
+    cout << "\nVector pos: " << pos[0] <<  " " << pos[1] << " " << pos[2] << " " << pos[3] << endl;
 
     if (obj != NULL)
     {
-        for (int i = pos[2]; i <= pos[3]; ++i)
+        obj_aux = (uchar **) malloc ((pos[1]-pos[0]+1) * sizeof(uchar *));
+        for (int i = 0; i < pos[1]-pos[0]; ++i)
+            obj_aux[i] = (uchar *) malloc ((pos[3]-pos[2]+1) * sizeof(uchar));
+
+        uchar aux;
+        for (int i = 0; i <= pos[1]-pos[0]; ++i)
         {
-            for (int j = pos[0]; j <= pos[1]; ++j)
+            if (pos[1]-pos[0]%2 == 0 && i == (pos[1]-pos[0])/2)
+                break;
+
+            else if (pos[1]-pos[0]%2 != 0 && i == (pos[1]-pos[0])/2 + 1)
+                break;
+
+            for (int j = 0; j <= pos[3]-pos[2]; ++j)
             {
-                img->pixel[i][j] = obj[i-pos[2]][j-pos[0]];
+                aux = obj[i][j];
+                obj[i][j] = obj[pos[1]-pos[0]-i][j];
+                obj[pos[1]-pos[0]-i][j] = aux;
             }
         }
+
+        printf("Reflecting...\n");
+        
+        // apaga imagem toda
+        eraseAll(img);
+
+        // reescreve objeto de imagem
+        for (int i = pos[0]; i <= pos[1]; ++i)
+            for (int j = pos[2]; j <= pos[3]; ++j)
+                img->pixel[i][j] = obj[i-pos[0]][j-pos[2]];
+
+
+        // else printf("== ERROR. CAN'T MOVE THE TURTLE BEYOND THE IMAGE SIZE.\n");
     }
+
+    else printf("\n== ERROR. OBJECT NOT FOUND.\n\n");
+
+    return;
 }
 
 
@@ -583,5 +619,58 @@ void RH (Image *img)
 
 void RV (Image *img)
 {
+    uchar **obj, **obj_aux;
+    int pos[4];
 
+    obj = findObject(img, pos); // retorna o objeto da imagem e um vetor de posicoes
+
+    /**
+     * pos[0] = -1; // linha de inicio
+     * pos[1] = -1; // linha de fim
+     * pos[2] = -1; // coluna de inicio
+     * pos[3] = -1; // coluna de fim
+     */
+    
+    cout << "\nVector pos: " << pos[0] <<  " " << pos[1] << " " << pos[2] << " " << pos[3] << endl;
+
+    if (obj != NULL)
+    {
+        obj_aux = (uchar **) malloc ((pos[1]-pos[0]+1) * sizeof(uchar *));
+        for (int i = 0; i < pos[1]-pos[0]; ++i)
+            obj_aux[i] = (uchar *) malloc ((pos[3]-pos[2]+1) * sizeof(uchar));
+
+        uchar aux;
+        for (int i = 0; i <= pos[1]-pos[0]; ++i)
+        {
+            if (pos[1]-pos[0]%2 == 0 && i == (pos[1]-pos[0])/2)
+                break;
+
+            else if (pos[1]-pos[0]%2 != 0 && i == (pos[1]-pos[0])/2 + 1)
+                break;
+
+            for (int j = 0; j <= pos[3]-pos[2]; ++j)
+            {
+                aux = obj[i][j];
+                obj[i][j] = obj[pos[1]-pos[0]-i][j];
+                obj[pos[1]-pos[0]-i][j] = aux;
+            }
+        }
+
+        printf("Reflecting...\n");
+        
+        // apaga imagem toda
+        eraseAll(img);
+
+        // reescreve objeto de imagem
+        for (int i = pos[0]; i <= pos[1]; ++i)
+            for (int j = pos[2]; j <= pos[3]; ++j)
+                img->pixel[i][j] = obj[i-pos[0]][j-pos[2]];
+
+
+        // else printf("== ERROR. CAN'T MOVE THE TURTLE BEYOND THE IMAGE SIZE.\n");
+    }
+
+    else printf("\n== ERROR. OBJECT NOT FOUND.\n\n");
+
+    return;
 }

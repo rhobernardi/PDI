@@ -141,6 +141,8 @@ void analyzeFrequency(Image *img, double *percent_vec, double *average, double *
  */
 void floodFill(Image *img, unsigned int x, unsigned int y, uchar target_tone, uchar replacement_tone);
 
+void eraseAll (Image *img);
+
 /**
  * Transpoe a matriz de imagem de entrada
  * 
