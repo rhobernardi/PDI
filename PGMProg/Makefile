@@ -6,11 +6,11 @@ PZIP = 8066395_Tarefa3.zip
 IN = tartaruga.pgm
 OUT = img_out.pgm
 
-CMD = RO -90
+CMD = RH -90
 
 
 
-all: clean compile run
+all: clean compile
 
 
 compile:
@@ -29,19 +29,5 @@ zip: clean
 	@rm -f $(PZIP)
 	@zip -r $(PZIP) $(CC) Makefile README.md *.hpp $(IN)
 
-run: compile
-	#./$(BIN) $(IN) MH +100
-	#./$(BIN) $(IN) MV -100
-	#./$(BIN) $(IN) MH -20
-	#./$(BIN) $(IN) MV +20
-	#./$(BIN) $(IN) RO +90
-	#./$(BIN) $(IN) RO -90
-	#./$(BIN) $(IN) RO +180
-	./$(BIN) $(IN) RH 
-	./$(BIN) $(IN) RV 
-	
-push: clean
-	git add *
-	git status
-	git commit -m "Tarefa 4 em andamento"
-	git push
+run: 
+	./$(BIN) $(IN) $(CMD)

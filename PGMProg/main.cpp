@@ -48,46 +48,36 @@ int main(int argc, char const *argv[])
         npixels = stringToInteger(complement);
         angl = stringToInteger(complement);
 
-        cout << "\nOp: " << operation << "  Value: " << npixels << endl;
-
         if(!strcmp(operation, "MH"))
         {
             MH(&imgOut, npixels);
-            //printf("MH FUNCTION DONE\n");
-            saveImage(&imgOut, "MH");
         }
 
         else if(!strcmp(operation, "MV"))
         {
             MV(&imgOut, npixels);
-            //printf("MV FUNCTION DONE\n");
-            saveImage(&imgOut, "MV");
         }
 
         else if(!strcmp(operation, "RO"))
         {
             RO(&imgOut, angl);
-            //printf("RO FUNCTION DONE\n");
-            saveImage(&imgOut, "RO");
         }
 
         else if(!strcmp(operation, "RH"))
         {
+            printf("\nReflecting...\n");
             RH(&imgOut);
-            //printf("RH FUNCTION DONE\n");
-            saveImage(&imgOut, "RH");
         }
 
         else if(!strcmp(operation, "RV"))
         {
+            printf("\nReflecting...\n");
             RV(&imgOut);
-            //printf("RV FUNCTION DONE\n");
-            saveImage(&imgOut, "RV");
         }
 
         else printf("== ERROR. INVALID OPERATION. USE \"MH\", \"MV\", \"RO\", \"RH\" OR \"RV\".\n");
 
-        //saveImage(&imgOut, output);
+        saveImage(&imgOut, output);
         printf("Done.\n");
     }
 

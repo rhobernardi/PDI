@@ -333,7 +333,7 @@ int stringToInteger(string str)
 
 
 
-unsigned char **findObject (Image *img, int *obj_pos)
+unsigned char **searchObject (Image *img, int *obj_pos)
 {
     uchar **obj, color = 255;
 
@@ -341,8 +341,6 @@ unsigned char **findObject (Image *img, int *obj_pos)
     obj_pos[1] = -1; // linha de fim
     obj_pos[2] = -1; // coluna de inicio
     obj_pos[3] = -1; // coluna de fim
-
-    cout << "\n\n1- Aux: " << " " << obj_pos[0] << " " << obj_pos[1] << " " << obj_pos[2] << " " << obj_pos[3] << endl;
 
     // marca inicio e fim do objeto na imagem no vetor auxiliar
     // -> extremo norte
@@ -353,10 +351,6 @@ unsigned char **findObject (Image *img, int *obj_pos)
             if (img->pixel[i][j] < color && obj_pos[0] < 0)
             {
                 obj_pos[0] = i;
-
-                cout << "\n\n2- cor: " << (int)img->pixel[i][j] <<
-                        "\nAux: " << " " << obj_pos[0] << " " << obj_pos[1] << " " << obj_pos[2] << " " << obj_pos[3] << endl;
-
                 break;
             }
         }
@@ -370,10 +364,6 @@ unsigned char **findObject (Image *img, int *obj_pos)
             if (img->pixel[i][j] < color && obj_pos[1] < 0)
             {
                 obj_pos[1] = i;
-
-                cout << "\n\n3- cor: " << (int)img->pixel[i][j] <<
-                        "\nAux: " << " " << obj_pos[0] << " " << obj_pos[1] << " " << obj_pos[2] << " " << obj_pos[3] << endl;
-
                 break;
             }
         }
@@ -387,10 +377,6 @@ unsigned char **findObject (Image *img, int *obj_pos)
             if (img->pixel[i][j] < color && obj_pos[2] < 0)
             {
                 obj_pos[2] = i;
-
-                cout << "\n\n4- cor: " << (int)img->pixel[i][j] <<
-                        "\nAux: " << " " << obj_pos[0] << " " << obj_pos[1] << " " << obj_pos[2] << " " << obj_pos[3] << endl;
-
                 break;
             }
         }
@@ -404,28 +390,28 @@ unsigned char **findObject (Image *img, int *obj_pos)
             if (img->pixel[i][j] < color && obj_pos[3] < 0)
             {
                 obj_pos[3] = i;
-
-                cout << "\n\n5- cor: " << (int)img->pixel[i][j] <<
-                        "\nAux: " << " " << obj_pos[0] << " " << obj_pos[1] << " " << obj_pos[2] << " " << obj_pos[3] << endl;
-
                 break;
             }
         }
     }    
 
-    // for (int i = obj_pos[2]; i <= obj_pos[3]; ++i)
-    // {
-    //     img->pixel[i][obj_pos[0]] = 150;
-    //     img->pixel[i][obj_pos[1]] = 150;
-    // }
+    /*
+        // Controle: marca um quadrado no objeto ao encontra-lo
+        
+        for (int i = obj_pos[2]; i <= obj_pos[3]; ++i)
+        {
+            img->pixel[i][obj_pos[0]] = 150;
+            img->pixel[i][obj_pos[1]] = 150;
+        }
+        
+        for (int j = obj_pos[0]; j <= obj_pos[1]; ++j)
+        {
+            img->pixel[obj_pos[2]][j] = 150;
+            img->pixel[obj_pos[3]][j] = 150;
+        }
 
-    // for (int j = obj_pos[0]; j <= obj_pos[1]; ++j)
-    // {
-    //     img->pixel[obj_pos[2]][j] = 150;
-    //     img->pixel[obj_pos[3]][j] = 150;
-    // }
-
-    // saveImage(img, "obj_marked.pgm");
+        saveImage(img, "obj_marked.pgm");
+    */
 
     if (obj_pos[0] >= 0 && obj_pos[1] >= 0 && obj_pos[2] >= 0 && obj_pos[3] >= 0)
     {
@@ -448,9 +434,6 @@ unsigned char **findObject (Image *img, int *obj_pos)
                 }
             }
         }
-
-        cout << "\n\nFINAL-  h: " << h << " w: " << w <<
-                "\nAux: " << " " << obj_pos[0] << " " << obj_pos[1] << " " << obj_pos[2] << " " << obj_pos[3] << endl;
     }
 
     return obj;
@@ -465,7 +448,7 @@ void MH (Image *img, int pixels)
     uchar **obj;
     int pos[4];
 
-    obj = findObject(img, pos); // retorna o objeto da imagem e um vetor de posicoes
+    obj = searchObject(img, pos); // retorna o objeto da imagem e um vetor de posicoes
 
     /**
      * pos[0] = -1; // linha de inicio
@@ -473,14 +456,12 @@ void MH (Image *img, int pixels)
      * pos[2] = -1; // coluna de inicio
      * pos[3] = -1; // coluna de fim
      */
-    
-    cout << "vector pos: " << pos[0] <<  " " << pos[1] << " " << pos[2] << " " << pos[3] << endl;
 
     if (obj != NULL)
     {
         if (pos[3]+pixels <= img->width && pos[2]+pixels >= 0)
         {
-            printf("Moving...\n");
+            printf("\nMoving %d pixels...\n", pixels);
             
             // apaga imagem toda
             eraseAll(img);
@@ -508,7 +489,7 @@ void MV (Image *img, int pixels)
     uchar **obj;
     int pos[4];
 
-    obj = findObject(img, pos); // retorna o objeto da imagem e um vetor de posicoes
+    obj = searchObject(img, pos); // retorna o objeto da imagem e um vetor de posicoes
 
     /**
      * pos[0] = -1; // linha de inicio
@@ -523,7 +504,7 @@ void MV (Image *img, int pixels)
     {
         if (pos[1]-pixels <= img->height && pos[0]-pixels >= 0)
         {
-            printf("Moving...\n");
+            printf("\nMoving %d pixels...\n", pixels);
             
             // apaga imagem toda
             eraseAll(img);
@@ -546,12 +527,12 @@ void MV (Image *img, int pixels)
 
 
 
-void RO (Image *img, int angle)
+void RO (Image *img, int angl)
 {
     uchar **obj;
     int pos[4];
 
-    obj = findObject(img, pos); // retorna o objeto da imagem e um vetor de posicoes
+    obj = searchObject(img, pos); // retorna o objeto da imagem e um vetor de posicoes
 
     /**
      * pos[0] = -1; // linha de inicio
@@ -560,20 +541,23 @@ void RO (Image *img, int angle)
      * pos[3] = -1; // coluna de fim
      */
     
-    if (angle == 90)
+    if (angl == 90)
     {
+        printf("\nRotating %d degrees...\n", angl);
         RV(img);
         transposeImage(img);
     }
 
-    else if (angle == -90)
+    else if (angl == -90)
     {
+        printf("\nRotating...\n");
         RH(img);
         transposeImage(img);
     }
 
-    else if(angle == 180 || angle == -180)
+    else if(angl == 180 || angl == -180)
     {
+        printf("\nRotating...\n");
         RV(img);
         RH(img);
     }
@@ -590,7 +574,7 @@ void RH (Image *img)
     uchar **obj, **obj_aux;
     int pos[4];
 
-    obj = findObject(img, pos); // retorna o objeto da imagem e um vetor de posicoes
+    obj = searchObject(img, pos); // retorna o objeto da imagem e um vetor de posicoes
 
     /**
      * pos[0] = -1; // linha de inicio
@@ -598,8 +582,6 @@ void RH (Image *img)
      * pos[2] = -1; // coluna de inicio
      * pos[3] = -1; // coluna de fim
      */
-    
-    cout << "\nVector pos: " << pos[0] <<  " " << pos[1] << " " << pos[2] << " " << pos[3] << endl;
 
     if (obj != NULL)
     {
@@ -623,8 +605,6 @@ void RH (Image *img)
                 obj[i][pos[3]-pos[2]-j] = aux;
             }
         }
-
-        printf("Reflecting...\n");
         
         // apaga imagem toda
         eraseAll(img);
@@ -633,9 +613,6 @@ void RH (Image *img)
         for (int i = pos[0]; i <= pos[1]; ++i)
             for (int j = pos[2]; j <= pos[3]; ++j)
                 img->pixel[i][j] = obj[i-pos[0]][j-pos[2]];
-
-
-        // else printf("== ERROR. CAN'T MOVE THE TURTLE BEYOND THE IMAGE SIZE.\n");
     }
 
     else printf("\n== ERROR. OBJECT NOT FOUND.\n\n");
@@ -652,7 +629,7 @@ void RV (Image *img)
     uchar **obj, **obj_aux;
     int pos[4];
 
-    obj = findObject(img, pos); // retorna o objeto da imagem e um vetor de posicoes
+    obj = searchObject(img, pos); // retorna o objeto da imagem e um vetor de posicoes
 
     /**
      * pos[0] = -1; // linha de inicio
@@ -660,8 +637,6 @@ void RV (Image *img)
      * pos[2] = -1; // coluna de inicio
      * pos[3] = -1; // coluna de fim
      */
-    
-    cout << "\nVector pos: " << pos[0] <<  " " << pos[1] << " " << pos[2] << " " << pos[3] << endl;
 
     if (obj != NULL)
     {
@@ -685,8 +660,6 @@ void RV (Image *img)
                 obj[pos[1]-pos[0]-i][j] = aux;
             }
         }
-
-        printf("Reflecting...\n");
         
         // apaga imagem toda
         eraseAll(img);
@@ -695,9 +668,6 @@ void RV (Image *img)
         for (int i = pos[0]; i <= pos[1]; ++i)
             for (int j = pos[2]; j <= pos[3]; ++j)
                 img->pixel[i][j] = obj[i-pos[0]][j-pos[2]];
-
-
-        // else printf("== ERROR. CAN'T MOVE THE TURTLE BEYOND THE IMAGE SIZE.\n");
     }
 
     else printf("\n== ERROR. OBJECT NOT FOUND.\n\n");
