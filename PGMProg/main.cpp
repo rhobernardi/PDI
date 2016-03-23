@@ -2,7 +2,7 @@
 /*****************************************************************
 *
 *    SCC0251 - Processamento de Imagem
-*    Tarefa 4 - Movimentacao de Objeto em imagem binaria
+*    Tarefa 5 - Movimentacao de Objeto em imagem binaria
 *
 *    -Rodrigo das Neves Bernardi - 8066395
 *

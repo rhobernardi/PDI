@@ -1,7 +1,7 @@
 
 CC = pdi.cpp main.cpp
-BIN = tarefa4
-PZIP = 8066395_Tarefa4.zip
+BIN = tarefa5
+PZIP = 8066395_Tarefa5.zip
 
 IN = tartaruga.pgm
 OUT = img_out.pgm
@@ -29,5 +29,11 @@ zip: clean
 	@rm -f $(PZIP)
 	@zip -r $(PZIP) $(CC) Makefile README.md *.hpp $(IN)
 
-run: 
+run:
 	./$(BIN) $(IN) $(CMD)
+	
+push: clean
+	git add *
+	git status
+	git commit -m "Tarefa 5 em andamento"
+	git push
