@@ -548,19 +548,36 @@ void RO (Image *img, int angl)
         transposeImage(img);
     }
 
+    else if (angl == 270)
+    {
+        printf("\nRotating %d degrees...\n", angl);
+        RH(img);
+        transposeImage(img);
+    }
+
     else if (angl == -90)
     {
-        printf("\nRotating...\n");
+        printf("\nRotating %d degrees...\n", angl);
         RH(img);
+        transposeImage(img);
+    }
+
+    else if (angl == -270)
+    {
+        printf("\nRotating %d degrees...\n", angl);
+        RV(img);
         transposeImage(img);
     }
 
     else if(angl == 180 || angl == -180)
     {
-        printf("\nRotating...\n");
+        printf("\nRotating %d degrees...\n", angl);
         RV(img);
         RH(img);
     }
+
+    else if (angl == 360)
+        return;
 
     else return;
 }
