@@ -1,7 +1,7 @@
 
 CC = pdi.cpp main.cpp
 BIN = tarefa4
-PZIP = 8066395_Tarefa3.zip
+PZIP = 8066395_Tarefa4.zip
 
 IN = tartaruga.pgm
 OUT = img_out.pgm
