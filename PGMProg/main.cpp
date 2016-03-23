@@ -53,36 +53,41 @@ int main(int argc, char const *argv[])
         if(!strcmp(operation, "MH"))
         {
             MH(&imgOut, npixels);
-            printf("MH FUNCTION DONE\n");
+            //printf("MH FUNCTION DONE\n");
+            saveImage(&imgOut, "MH");
         }
 
         else if(!strcmp(operation, "MV"))
         {
             MV(&imgOut, npixels);
-            printf("MV FUNCTION DONE\n");
+            //printf("MV FUNCTION DONE\n");
+            saveImage(&imgOut, "MV");
         }
 
         else if(!strcmp(operation, "RO"))
         {
-            //RO(&imgOut, direction, angl);
-            printf("RO FUNCTION DONE\n");
+            RO(&imgOut, angl);
+            //printf("RO FUNCTION DONE\n");
+            saveImage(&imgOut, "RO");
         }
 
         else if(!strcmp(operation, "RH"))
         {
-            //RH(&imgIn, &imgOut);
-            printf("RH FUNCTION DONE\n");
+            RH(&imgOut);
+            //printf("RH FUNCTION DONE\n");
+            saveImage(&imgOut, "RH");
         }
 
         else if(!strcmp(operation, "RV"))
         {
             RV(&imgOut);
-            printf("RV FUNCTION DONE\n");
+            //printf("RV FUNCTION DONE\n");
+            saveImage(&imgOut, "RV");
         }
 
         else printf("== ERROR. INVALID OPERATION. USE \"MH\", \"MV\", \"RO\", \"RH\" OR \"RV\".\n");
 
-        saveImage(&imgOut, output);
+        //saveImage(&imgOut, output);
         printf("Done.\n");
     }
 

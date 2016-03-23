@@ -548,7 +548,37 @@ void MV (Image *img, int pixels)
 
 void RO (Image *img, int angle)
 {
+    uchar **obj;
+    int pos[4];
 
+    obj = findObject(img, pos); // retorna o objeto da imagem e um vetor de posicoes
+
+    /**
+     * pos[0] = -1; // linha de inicio
+     * pos[1] = -1; // linha de fim
+     * pos[2] = -1; // coluna de inicio
+     * pos[3] = -1; // coluna de fim
+     */
+    
+    if (angle == 90)
+    {
+        RV(img);
+        transposeImage(img);
+    }
+
+    else if (angle == -90)
+    {
+        RH(img);
+        transposeImage(img);
+    }
+
+    else if(angle == 180 || angle == -180)
+    {
+        RV(img);
+        RH(img);
+    }
+
+    else return;
 }
 
 
@@ -578,19 +608,19 @@ void RH (Image *img)
             obj_aux[i] = (uchar *) malloc ((pos[3]-pos[2]+1) * sizeof(uchar));
 
         uchar aux;
-        for (int i = 0; i <= pos[1]-pos[0]; ++i)
+        for (int j = 0; j <= pos[3]-pos[2]; ++j)
         {
-            if (pos[1]-pos[0]%2 == 0 && i == (pos[1]-pos[0])/2)
+            if ((pos[3]-pos[2])%2 == 0 && j == (pos[3]-pos[2])/2)
                 break;
 
-            else if (pos[1]-pos[0]%2 != 0 && i == (pos[1]-pos[0])/2 + 1)
+            else if ((pos[3]-pos[2])%2 != 0 && j == (pos[3]-pos[2])/2 + 1)
                 break;
 
-            for (int j = 0; j <= pos[3]-pos[2]; ++j)
+            for (int i = 0; i <= pos[1]-pos[0]; ++i)
             {
                 aux = obj[i][j];
-                obj[i][j] = obj[pos[1]-pos[0]-i][j];
-                obj[pos[1]-pos[0]-i][j] = aux;
+                obj[i][j] = obj[i][pos[3]-pos[2]-j];
+                obj[i][pos[3]-pos[2]-j] = aux;
             }
         }
 
@@ -642,10 +672,10 @@ void RV (Image *img)
         uchar aux;
         for (int i = 0; i <= pos[1]-pos[0]; ++i)
         {
-            if (pos[1]-pos[0]%2 == 0 && i == (pos[1]-pos[0])/2)
+            if ((pos[1]-pos[0])%2 == 0 && i == (pos[1]-pos[0])/2)
                 break;
 
-            else if (pos[1]-pos[0]%2 != 0 && i == (pos[1]-pos[0])/2 + 1)
+            else if ((pos[1]-pos[0])%2 != 0 && i == (pos[1]-pos[0])/2 + 1)
                 break;
 
             for (int j = 0; j <= pos[3]-pos[2]; ++j)

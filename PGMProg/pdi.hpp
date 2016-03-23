@@ -171,7 +171,7 @@ void MV(Image *img, int pixels);
 void RO(Image *img, int angl);
 
 
-void RH(Image *imgIn, Image *);
+void RH(Image *img);
 
 
 void RV(Image *img);

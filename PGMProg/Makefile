@@ -6,8 +6,7 @@ PZIP = 8066395_Tarefa3.zip
 IN = tartaruga.pgm
 OUT = img_out.pgm
 
-CMD = RV 
-#+20
+CMD = RO -90
 
 
 
@@ -31,7 +30,15 @@ zip: clean
 	@zip -r $(PZIP) $(CC) Makefile README.md *.hpp $(IN)
 
 run: compile
-	./$(BIN) $(IN) $(CMD)
+	#./$(BIN) $(IN) MH +100
+	#./$(BIN) $(IN) MV -100
+	#./$(BIN) $(IN) MH -20
+	#./$(BIN) $(IN) MV +20
+	#./$(BIN) $(IN) RO +90
+	#./$(BIN) $(IN) RO -90
+	#./$(BIN) $(IN) RO +180
+	./$(BIN) $(IN) RH 
+	./$(BIN) $(IN) RV 
 	
 push: clean
 	git add *
