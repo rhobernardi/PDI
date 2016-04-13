@@ -342,60 +342,74 @@ unsigned char **searchObject (Image *img, int *obj_pos)
     obj_pos[2] = -1; // coluna de inicio
     obj_pos[3] = -1; // coluna de fim
 
+    int minX = 0, maxX = 600, minY = 0, maxY = 600;
+
     // marca inicio e fim do objeto na imagem no vetor auxiliar
-    // -> extremo norte
+    // -> extremo sul
     for (int i = 0; i < img->height; ++i)
     {
         for (int j = 0; j < img->width; ++j)
         {
-            if (img->pixel[i][j] < color && obj_pos[0] < 0)
+            if (img->pixel[i][j] < color) // && obj_pos[1] < 0)
             {
-                obj_pos[0] = i;
-                break;
+                if(i > minX){
+                    minX = i;
+                }
+                obj_pos[1] = minX;
+                //break;
             }
         }
     }
 
-    // -> extremo sul
+    // -> extremo norte
     for (int i = img->height-1; i >= 0; --i)
     {
         for (int j = img->width-1; j >= 0; --j)
         {
-            if (img->pixel[i][j] < color && obj_pos[1] < 0)
+            if (img->pixel[i][j] < color) // && obj_pos[0] < 0)
             {
-                obj_pos[1] = i;
-                break;
-            }
-        }
-    }
-
-    // -> extrema esquerda
-    for (int i = 0; i < img->width; ++i)
-    {
-        for (int j = 0; j < img->height; ++j)
-        {
-            if (img->pixel[i][j] < color && obj_pos[2] < 0)
-            {
-                obj_pos[2] = i;
-                break;
+                if(i < maxX){
+                    maxX = i;
+                }
+                obj_pos[0] = maxX;
+                //break;
             }
         }
     }
 
     // -> extrema direita
+    for (int i = 0; i < img->width; ++i)
+    {
+        for (int j = 0; j < img->height; ++j)
+        {
+            if (img->pixel[i][j] < color) // && obj_pos[3] < 0)
+            {
+                if(i > minY){
+                    minY = i;
+                }
+                obj_pos[3] = minY;
+                //break;
+            }
+        }
+    }
+
+    // -> extrema esquerda
     for (int i = img->width-1; i >= 0; --i)
     {
         for (int j = img->height-1; j >= 0; --j)
         {
-            if (img->pixel[i][j] < color && obj_pos[3] < 0)
+            if (img->pixel[i][j] < color) // && obj_pos[2] < 0)
             {
-                obj_pos[3] = i;
-                break;
+                if(i < maxY){
+                    maxY = i;
+                }
+                obj_pos[2] = maxY;
+                //break;
             }
         }
     }    
 
-    /*
+    
         // Controle: marca um quadrado no objeto ao encontra-lo
         
         for (int i = obj_pos[2]; i <= obj_pos[3]; ++i)
@@ -411,7 +425,9 @@ unsigned char **searchObject (Image *img, int *obj_pos)
         }
 
         saveImage(img, "obj_marked.pgm");
-    */
+    
+    
+    cout << "Coord. object:  " << obj_pos[0] << " " << obj_pos[1] << " " << obj_pos[2] << " " << obj_pos[3] << endl;
 
     if (obj_pos[0] >= 0 && obj_pos[1] >= 0 && obj_pos[2] >= 0 && obj_pos[3] >= 0)
     {

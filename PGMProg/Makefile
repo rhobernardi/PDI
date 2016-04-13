@@ -1,12 +1,10 @@
 
 CC = pdi.cpp main.cpp
-BIN = tarefa5
+BIN = filtragem
 PZIP = 8066395_Tarefa5.zip
 
-IN = tartaruga.pgm
+IN = image.pgm
 OUT = img_out.pgm
-
-CMD = RO -90
 
 
 
@@ -30,7 +28,7 @@ zip: clean
 	@zip -r $(PZIP) $(CC) Makefile README.md *.hpp $(IN)
 
 run:
-	./$(BIN) $(IN) $(CMD)
+	@./$(BIN)
 	
 push: clean
 	git add *
