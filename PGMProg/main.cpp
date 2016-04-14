@@ -24,7 +24,7 @@ int main(int argc, char const *argv[])
 
     int size;
     char input[20], output[20]; 
-    string filter, smask;
+    string filter, mask;
 
     if (argc != 5)
     {
@@ -36,7 +36,7 @@ int main(int argc, char const *argv[])
     {
         strcpy(input, argv[1]);
         filter =  argv[2];
-        smask = argv[3];
+        mask = argv[3];
         strcpy(output, argv[4]);
 
         //strcpy(output, "img_out.pgm");
@@ -47,25 +47,25 @@ int main(int argc, char const *argv[])
         // Execucao do programa para imagens em escala de cinza (PGM)
         if (imgIn.type[0] == 'P' && imgIn.type[1] == '2')
         {
-            int mask = stringToInteger(smask);
+            unsigned int mask_dim = stringToInteger(mask);
             //copyImageBorder(&imgIn, &imgOut, mask);
 
             if (filter.compare("media") == 0)
             {
                 cout << "FILTER: " << filter << " MASK: " << mask << endl;
-                mediaFilter();
+                mediaFilter(&imgOut, mask_dim);
             }
 
             else if (filter.compare("mediana") == 0)
             {
                 cout << "FILTER: " << filter << " MASK: " << mask << endl;
-                medianaFilter();
+                medianaFilter(&imgOut, mask_dim);
             }
 
             else if (filter.compare("gauss") == 0)
             {
                 cout << "FILTER: " << filter << " MASK: " << mask << endl;
-                gaussFilter();
+                gaussFilter(&imgOut, mask_dim);
             }
 
             else 
