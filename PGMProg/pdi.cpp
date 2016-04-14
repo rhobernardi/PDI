@@ -322,7 +322,7 @@ int stringToInteger(string str)
 
 
 
-void mediaFilter(Image *img, int mask)
+void mediaFilter(Image *img, unsigned int mask)
 {
 
 }
@@ -331,7 +331,7 @@ void mediaFilter(Image *img, int mask)
 
 
 
-void medianaFilter(Image *img, int mask)
+void medianaFilter(Image *img, unsigned int mask)
 {
     
 }
@@ -340,7 +340,7 @@ void medianaFilter(Image *img, int mask)
 
 
 
-void gaussFilter(Image *img, int mask)
+void gaussFilter(Image *img, unsigned int mask)
 {
     
 }
