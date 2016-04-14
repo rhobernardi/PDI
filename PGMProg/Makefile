@@ -27,8 +27,8 @@ zip: clean
 	@rm -f $(PZIP)
 	@zip -r $(PZIP) $(CC) Makefile README.md *.hpp $(IN)
 
-run:
-	@./$(BIN)
+#run:
+#	@./$(BIN)
 	
 push: clean
 	git add *

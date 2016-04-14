@@ -8,13 +8,7 @@ Para compilar:
 
 
 Para rodar o programa:
-	
-	$ make run
 
-ou
+	$ ./filtragem image.pgm <comando> <mask> image_out.pgm
 
-	$ ./tarefa5 image.pgm <comando_de_entrada>
-
-Nota: Caso queira mudar o comando para manusear a tartaruga pelo Makefile, abra o Makefile e altere a variavel 'CMD' no inicio do arquivo para que o programa seja executado com o comando desejado. Segue um exemplo:
-
-	CMD = MH +90
+Nota: 

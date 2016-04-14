@@ -163,53 +163,8 @@ void transposeImage (Image *img);
  */
 int stringToInteger(string str);
 
-/**
- * Encontra um objeto numa imagem com fundo branco
- * 
- * @param  img 					Imagem para manipulacao
- * @return     					Retorna objeto da imagem
- */
-unsigned char **searchObject(Image *img);
-
-/**
- * Move o objeto da imagem n pixels para direita ou para esquerda
- * 
- * @param img    				Imagem para manipulacao
- * @param pixels 				Numero de pixels que o objeto se desloca
- */
-void MH(Image *img, int pixels);
-
-/**
- * Move o objeto da imagem n pixels para cima ou para baixo
- * 
- * @param img    				Imagem para manipulacao
- * @param pixels 				Numero de pixels que o objeto se desloca
- */
-void MV(Image *img, int pixels);
-
-/**
- * Rotaciona o objeto em n graus
- * 
- * @param img    				Imagem para manipulacao
- * @param angl 					Valor do angulo de rotacao do objeto
- */
-void RO(Image *img, int angl);
-
-
-/**
- * Relfete o objeto da imagem na horizontal
- * 
- * @param img    				Imagem para manipulacao
- */
-void RH(Image *img);
-
-
-/**
- * Relfete o objeto da imagem na vertical
- * 
- * @param img    				Imagem para manipulacao
- */
-void RV(Image *img);
-
+void mediaFilter(Image *img, int mask);
+void medianaFilter(Image *img, int mask);
+void gaussFilter(Image *img, int mask);
 
 #endif
