@@ -51,7 +51,7 @@ void freeData (Image *img)
 
 
 
-void readImage (Image *imgIn, Image *imgOut, char *in) 
+void readImage (Image *imgIn, Image *imgOut, char *in, int bord) 
 {
     FILE *input;
     char type[3];
@@ -60,7 +60,7 @@ void readImage (Image *imgIn, Image *imgOut, char *in)
     input = fopen(in, "r");
 
     if (input == NULL)
-        printf("Can't read image file.\n");
+        printf("== ERROR. CAN'T READ IMAGE FILE ==\n\n");
     
     else 
     {
@@ -90,7 +90,7 @@ void readImage (Image *imgIn, Image *imgOut, char *in)
 
             // aloca as matrizes width x height das imagens de entrada e saída na memória
             allocData(imgIn, type, width, height, maxVal);
-            allocData(imgOut, type, width, height, maxVal);
+            allocData(imgOut, type, width + bord, height + bord, maxVal);
             
             // le dados do arquivo
             for(int i = 0; i < height ; ++i)
@@ -118,7 +118,7 @@ void saveImage (Image *img, const char *out)
     // escreve header contendo tipo, comentário, dimensões e escala
     output = fopen(out, "w");
     fprintf(output, "%s\n", img->type);
-    fprintf(output, "#imagem gerada pelo programa\n");
+    fprintf(output, "# imagem gerada pelo programa\n");
     fprintf(output, "%d %d\n", img->width, img->height);
     fprintf(output, "%d\n", img->maxVal);
 
@@ -178,130 +178,6 @@ void processInversion (Image *imgIn, Image *imgOut)
 
 
 
-double averageCalc (Image *img, double *percent_vec, int n)
-{    
-    double sum=0;
-    
-    for (int i = 0; i < img->maxVal; ++i)
-    {
-        if(percent_vec[i] > 0) 
-        {
-            sum += (i*percent_vec[i]);
-        }
-    }
-
-    return sum / n;
-}
-
-
-
-
-
-double standardDeviation (Image *img, double *percent_vec, double *average, int n) 
-{
-    double dp=0;
-
-    for(int i=0; i <= img->maxVal; ++i)
-    {
-        if(percent_vec[i] > 0)
-            dp += pow((percent_vec[i]-(*average)), 2);
-    }
-
-    return sqrt(dp / (n-1));
-}
-
-
-
-
-
-void analyzeFrequency (Image *img, double *percent_vec, double *average, double *stand_dev) 
-{    
-    int total=0;
-
-    // Contagem dos pixels da imagem
-    for(int i=0; i<=img->maxVal; i++)
-        percent_vec[i] = 0;
-
-    for(int i = 0; i < img->height; ++i)
-        for (int j = 0; j < img->width; ++j)
-        {
-            percent_vec[(int)img->pixel[i][j]]++;
-
-            if(percent_vec[(int)img->pixel[i][j]] > 0)
-                total++;
-        }
-
-    // Calcula media aritmetica dos valores dos pixels
-    printf("\nCalculating average...\n");
-    
-    *average = averageCalc(img, percent_vec, total);
-    printf("Done.\n");
-
-
-    // Calcula desvio padrao dos valores dos pixels
-    printf("\nCalculating standard deviation...\n");
-    
-    *stand_dev = standardDeviation(img, percent_vec, average, total);
-    printf("Done.\n");
-
-
-    // Calcula frequencia dos valores dos pixels
-    printf("\nCalculating frequency...\n");
-
-    for(int i = 0; i<=img->maxVal; i++)
-        percent_vec[i] = (percent_vec[i] / total)*100;
-
-    printf("Done.\n");
-}
-
-
-
-
-
-void floodFill (Image *img, unsigned int x, unsigned int y, uchar target_tone, uchar replacement_tone)
-{
-    unsigned int index; uchar this_pixel;
-
-    // confere se o pixel existe, se nao retorna 
-    if((x >= 0 && x < img->width) && (y >= 0 && y < img->height))
-    {
-        // indexa pixel
-        //index = ((img->width*y)+x);
-        this_pixel = img->pixel[y][x];
-
-        // se ja estiver colorido com o tom de reposicao, retorna
-        if(target_tone == replacement_tone) return;
-
-        // se o pixel atual nao tem a mesma cor dos outros, retorna
-        if(this_pixel != target_tone) return;
-        
-        colorPixel(&img->pixel[y][x], replacement_tone);
-    
-        floodFill(img, x,  y+1,     target_tone,   replacement_tone); // proximo pixel acima
-        floodFill(img, x,  y-1,     target_tone,   replacement_tone); // proximo pixel abaixo
-        floodFill(img, x+1,    y,   target_tone,   replacement_tone); // proximo pixel a direita
-        floodFill(img, x-1,    y,   target_tone,   replacement_tone); // proximo pixel a esquerda
-    }
-
-    else return;
-
-    return;
-}
-
-
-
-
-
-void eraseAll (Image *img)
-{
-    for (int i = 0; i < img->height; ++i)
-        for (int j = 0; j < img->width; ++j)
-            img->pixel[i][j] = 255;
-}
-
-
-
-
 
 void transposeImage (Image *img)
 {
@@ -332,378 +208,117 @@ int stringToInteger(string str)
 
 
 
-
-unsigned char **searchObject (Image *img, int *obj_pos)
+/*void copyImageBorder(Image *imgIn, Image *imgOut, int mask)
 {
-    uchar **obj, color = 255;
-
-    obj_pos[0] = -1; // linha de inicio
-    obj_pos[1] = -1; // linha de fim
-    obj_pos[2] = -1; // coluna de inicio
-    obj_pos[3] = -1; // coluna de fim
-
-    int minX = 0, maxX = 600, minY = 0, maxY = 600;
-
-    // marca inicio e fim do objeto na imagem no vetor auxiliar
-    // -> extremo sul
-    for (int i = 0; i < img->height; ++i)
+    for (int i = 0; i < imgIn->height; ++i)
     {
-        for (int j = 0; j < img->width; ++j)
+        for (int j = 0; j < imgIn->width; ++j)
         {
-            if (img->pixel[i][j] < color) // && obj_pos[1] < 0)
+            imgOut = ;
+        }
+    }
+}
+*/
+
+
+
+
+void mediaFilter(Image *img, unsigned int mask)
+{
+
+}
+
+
+
+
+
+void medianaFilter(Image *img, unsigned int mask)
+{
+    
+}
+
+
+
+
+
+void gaussFilter(Image *img, unsigned int mask)
+{
+    
+}
+
+
+
+
+
+void saveImageBord (Image *img, const char *out, int bord) 
+{
+    FILE *output;
+
+    // escreve header contendo tipo, comentário, dimensões e escala
+    output = fopen(out, "w");
+    fprintf(output, "%s\n", img->type);
+    fprintf(output, "# imagem gerada pelo programa\n");
+    fprintf(output, "%d %d\n", img->width, img->height);
+    fprintf(output, "%d\n", img->maxVal);
+
+    // escreve dados da imagem 
+    if(img->type[0] == 'P' && img->type[1] == '2') 
+    {
+        for (int i = 0 /*bord/2*/; i < img->height/*+(bord/2)*/; ++i)
+        {
+            for (int j = 0/*bord/2*/; j < img->width/*+(bord/2)*/; ++j)
             {
-                if(i > minX){
-                    minX = i;
-                }
-                obj_pos[1] = minX;
-                //break;
+                fprintf(output, "%hhu\n", img->pixel[i][j]);
             }
         }
     }
 
-    // -> extremo norte
-    for (int i = img->height-1; i >= 0; --i)
-    {
-        for (int j = img->width-1; j >= 0; --j)
+    fclose(output);
+}
+
+
+
+
+
+void copyImageBord (Image *imgIn, Image *imgOut, int bord)
+{
+    for(int i = 0; i < imgIn->height; ++i)
+        for (int j = 0; j < imgIn->width; ++j)
         {
-            if (img->pixel[i][j] < color) // && obj_pos[0] < 0)
+            imgOut->pixel[i+(bord/2)][j+(bord/2)] = imgIn->pixel[i][j];
+
+            if (i == 0)
             {
-                if(i < maxX){
-                    maxX = i;
-                }
-                obj_pos[0] = maxX;
-                //break;
-            }
-        }
-    }
-
-    // -> extrema direita
-    for (int i = 0; i < img->width; ++i)
-    {
-        for (int j = 0; j < img->height; ++j)
-        {
-            if (img->pixel[i][j] < color) // && obj_pos[3] < 0)
-            {
-                if(i > minY){
-                    minY = i;
-                }
-                obj_pos[3] = minY;
-                //break;
-            }
-        }
-    }
-
-    // -> extrema esquerda
-    for (int i = img->width-1; i >= 0; --i)
-    {
-        for (int j = img->height-1; j >= 0; --j)
-        {
-            if (img->pixel[i][j] < color) // && obj_pos[2] < 0)
-            {
-                if(i < maxY){
-                    maxY = i;
-                }
-                obj_pos[2] = maxY;
-                //break;
-            }
-        }
-    }    
-
-    
-        // Controle: marca um quadrado no objeto ao encontra-lo
-        
-        for (int i = obj_pos[2]; i <= obj_pos[3]; ++i)
-        {
-            img->pixel[i][obj_pos[0]] = 150;
-            img->pixel[i][obj_pos[1]] = 150;
-        }
-        
-        for (int j = obj_pos[0]; j <= obj_pos[1]; ++j)
-        {
-            img->pixel[obj_pos[2]][j] = 150;
-            img->pixel[obj_pos[3]][j] = 150;
-        }
-
-        saveImage(img, "obj_marked.pgm");
-    
-    
-    cout << "Coord. object:  " << obj_pos[0] << " " << obj_pos[1] << " " << obj_pos[2] << " " << obj_pos[3] << endl;
-
-    if (obj_pos[0] >= 0 && obj_pos[1] >= 0 && obj_pos[2] >= 0 && obj_pos[3] >= 0)
-    {
-        int h = obj_pos[1]-obj_pos[0]+2;
-        obj = (uchar **) malloc (h * sizeof(uchar *));
-
-        int w = obj_pos[3]-obj_pos[2]+2;
-        for (int i = 0; i <= h; ++i)
-            obj[i] = (uchar *) malloc (w * sizeof(uchar));
-
-
-        //copia o objeto em uma submatriz e retorna o objeto;
-        if (obj != NULL)
-        {
-            for (int i = obj_pos[2]; i <= obj_pos[3]; ++i)
-            {
-                for (int j = obj_pos[0]; j <= obj_pos[1]; ++j)
+                for (int k = 1; k <= bord/2; ++k)
                 {
-                    obj[i-obj_pos[2]][j-obj_pos[0]] = img->pixel[i][j];
+                    imgOut->pixel[i+(bord/2)-k][(j+(bord/2))] = imgIn->pixel[i][j];
                 }
             }
-        }
-    }
 
-    return obj;
-}
-
-
-
-
-
-void MH (Image *img, int pixels)
-{
-    uchar **obj;
-    int pos[4];
-
-    obj = searchObject(img, pos); // retorna o objeto da imagem e um vetor de posicoes
-
-    /**
-     * pos[0] = -1; // linha de inicio
-     * pos[1] = -1; // linha de fim
-     * pos[2] = -1; // coluna de inicio
-     * pos[3] = -1; // coluna de fim
-     */
-
-    if (obj != NULL)
-    {
-        if (pos[3]+pixels <= img->width && pos[2]+pixels >= 0)
-        {
-            printf("\nMoving %d pixels...\n", pixels);
-            
-            // apaga imagem toda
-            eraseAll(img);
-
-            // reescreve objeto de imagem
-            for (int i = pos[0]; i <= pos[1]; ++i)
-                for (int j = pos[2]; j <= pos[3]; ++j)
-                    img->pixel[i][j+pixels] = obj[i-pos[0]][j-pos[2]];
-        }
-
-        else printf("== ERROR. CAN'T MOVE THE TURTLE BEYOND THE IMAGE SIZE.\n");
-    }
-
-    else printf("\n== ERROR. OBJECT NOT FOUND.\n\n");
-
-    return;
-}
-
-
-
-
-
-void MV (Image *img, int pixels)
-{
-    uchar **obj;
-    int pos[4];
-
-    obj = searchObject(img, pos); // retorna o objeto da imagem e um vetor de posicoes
-
-    /**
-     * pos[0] = -1; // linha de inicio
-     * pos[1] = -1; // linha de fim
-     * pos[2] = -1; // coluna de inicio
-     * pos[3] = -1; // coluna de fim
-     */
-    
-    cout << "vector pos: " << pos[0] <<  " " << pos[1] << " " << pos[2] << " " << pos[3] << endl;
-
-    if (obj != NULL)
-    {
-        if (pos[1]-pixels <= img->height && pos[0]-pixels >= 0)
-        {
-            printf("\nMoving %d pixels...\n", pixels);
-            
-            // apaga imagem toda
-            eraseAll(img);
-
-            // reescreve objeto de imagem
-            for (int i = pos[0]; i <= pos[1]; ++i)
-                for (int j = pos[2]; j <= pos[3]; ++j)
-                    img->pixel[i-pixels][j] = obj[i-pos[0]][j-pos[2]];
-        }
-
-        else printf("== ERROR. CAN'T MOVE THE TURTLE BEYOND THE IMAGE SIZE.\n");
-    }
-
-    else printf("\n== ERROR. OBJECT NOT FOUND.\n\n");
-
-    return;
-}
-
-
-
-
-
-void RO (Image *img, int angl)
-{
-    uchar **obj;
-    int pos[4];
-
-    obj = searchObject(img, pos); // retorna o objeto da imagem e um vetor de posicoes
-
-    /**
-     * pos[0] = -1; // linha de inicio
-     * pos[1] = -1; // linha de fim
-     * pos[2] = -1; // coluna de inicio
-     * pos[3] = -1; // coluna de fim
-     */
-    
-    if (angl == 90)
-    {
-        printf("\nRotating %d degrees...\n", angl);
-        RV(img);
-        transposeImage(img);
-    }
-
-    else if (angl == 270)
-    {
-        printf("\nRotating %d degrees...\n", angl);
-        RH(img);
-        transposeImage(img);
-    }
-
-    else if (angl == -90)
-    {
-        printf("\nRotating %d degrees...\n", angl);
-        RH(img);
-        transposeImage(img);
-    }
-
-    else if (angl == -270)
-    {
-        printf("\nRotating %d degrees...\n", angl);
-        RV(img);
-        transposeImage(img);
-    }
-
-    else if(angl == 180 || angl == -180)
-    {
-        printf("\nRotating %d degrees...\n", angl);
-        RV(img);
-        RH(img);
-    }
-
-    else if (angl == 360)
-        return;
-
-    else return;
-}
-
-
-
-
-
-void RH (Image *img)
-{
-    uchar **obj, **obj_aux;
-    int pos[4];
-
-    obj = searchObject(img, pos); // retorna o objeto da imagem e um vetor de posicoes
-
-    /**
-     * pos[0] = -1; // linha de inicio
-     * pos[1] = -1; // linha de fim
-     * pos[2] = -1; // coluna de inicio
-     * pos[3] = -1; // coluna de fim
-     */
-
-    if (obj != NULL)
-    {
-        obj_aux = (uchar **) malloc ((pos[1]-pos[0]+1) * sizeof(uchar *));
-        for (int i = 0; i < pos[1]-pos[0]; ++i)
-            obj_aux[i] = (uchar *) malloc ((pos[3]-pos[2]+1) * sizeof(uchar));
-
-        uchar aux;
-        for (int j = 0; j <= pos[3]-pos[2]; ++j)
-        {
-            if ((pos[3]-pos[2])%2 == 0 && j == (pos[3]-pos[2])/2)
-                break;
-
-            else if ((pos[3]-pos[2])%2 != 0 && j == (pos[3]-pos[2])/2 + 1)
-                break;
-
-            for (int i = 0; i <= pos[1]-pos[0]; ++i)
+//cout << "foi1" << endl;
+            if (i == imgIn->height-1)
             {
-                aux = obj[i][j];
-                obj[i][j] = obj[i][pos[3]-pos[2]-j];
-                obj[i][pos[3]-pos[2]-j] = aux;
+                for (int k = 1; k <= bord/2; ++k)
+                {
+                    imgOut->pixel[i+(bord/2)+k][(j+(bord/2))] = imgIn->pixel[i][j];
+                }   
             }
-        }
-        
-        // apaga imagem toda
-        eraseAll(img);
-
-        // reescreve objeto de imagem
-        for (int i = pos[0]; i <= pos[1]; ++i)
-            for (int j = pos[2]; j <= pos[3]; ++j)
-                img->pixel[i][j] = obj[i-pos[0]][j-pos[2]];
-    }
-
-    else printf("\n== ERROR. OBJECT NOT FOUND.\n\n");
-
-    return;
-}
-
-
-
-
-
-void RV (Image *img)
-{
-    uchar **obj, **obj_aux;
-    int pos[4];
-
-    obj = searchObject(img, pos); // retorna o objeto da imagem e um vetor de posicoes
-
-    /**
-     * pos[0] = -1; // linha de inicio
-     * pos[1] = -1; // linha de fim
-     * pos[2] = -1; // coluna de inicio
-     * pos[3] = -1; // coluna de fim
-     */
-
-    if (obj != NULL)
-    {
-        obj_aux = (uchar **) malloc ((pos[1]-pos[0]+1) * sizeof(uchar *));
-        for (int i = 0; i < pos[1]-pos[0]; ++i)
-            obj_aux[i] = (uchar *) malloc ((pos[3]-pos[2]+1) * sizeof(uchar));
-
-        uchar aux;
-        for (int i = 0; i <= pos[1]-pos[0]; ++i)
-        {
-            if ((pos[1]-pos[0])%2 == 0 && i == (pos[1]-pos[0])/2)
-                break;
-
-            else if ((pos[1]-pos[0])%2 != 0 && i == (pos[1]-pos[0])/2 + 1)
-                break;
-
-            for (int j = 0; j <= pos[3]-pos[2]; ++j)
+//cout << "foi2" << endl;
+            if (j == 0)
             {
-                aux = obj[i][j];
-                obj[i][j] = obj[pos[1]-pos[0]-i][j];
-                obj[pos[1]-pos[0]-i][j] = aux;
+                for (int k = 1; k <= bord/2; ++k)
+                {
+                    imgOut->pixel[i+(bord/2)][j+(bord/2)-k] = imgIn->pixel[i][j];
+                }
             }
+//cout << "foi3" << endl;
+            if (j == imgIn->width-1)
+            {
+                for (int k = 1; k <= bord/2; ++k)
+                {
+                    imgOut->pixel[i+(bord/2)][j+(bord/2)+k] = imgIn->pixel[i][j];
+                }   
+            }
+//cout << "foi4" << endl;
         }
-        
-        // apaga imagem toda
-        eraseAll(img);
-
-        // reescreve objeto de imagem
-        for (int i = pos[0]; i <= pos[1]; ++i)
-            for (int j = pos[2]; j <= pos[3]; ++j)
-                img->pixel[i][j] = obj[i-pos[0]][j-pos[2]];
-    }
-
-    else printf("\n== ERROR. OBJECT NOT FOUND.\n\n");
-
-    return;
 }

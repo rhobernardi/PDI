@@ -23,46 +23,85 @@ int main(int argc, char const *argv[])
     Image imgIn, imgOut;
 
     int size;
-    char input[20], output[20], operation[2], complement[4];
-    double result;
+    char input[20], output[20]; 
+    string filter, mask;
 
     if (argc != 5)
     {
-        printf("== INVALID ARGUMENTS. USE '$ ./filtragem image.pgm <filter> <mask> image_out.pgm'. ==\n\n");
-        return 0;
+        printf("\n== INVALID ARGUMENTS. USE '$ ./filtragem <image_in> <filter> <mask> <image_out>'. ==\n\n");
+        return -1;
     }
 
     else
     {
         strcpy(input, argv[1]);
-        strcpy(operation, argv[2]);
+        filter =  argv[2];
+        mask = argv[3];
+        strcpy(output, argv[4]);
 
-        if(argv[3] != NULL)
-            strcpy(complement, argv[3]);
+        //strcpy(output, "img_out.pgm");
+        
+        // converte o char de mask para um inteiro sem sinal
+        unsigned int mask_dim = stringToInteger(mask);
+        
+        // calcula borda
+        int bord = 2*floor(mask_dim/2);
 
-        strcpy(output, "img_out.pgm");
+        // Le a imagem de entrada e a transforma com borda de mask
+        readImage(&imgIn, &imgOut, input, bord);
+        
+                                copyImageBord(&imgIn, &imgOut, bord);
 
-        // Le a imagem de entrada
-        readImage(&imgIn, &imgOut, input);
+        saveImage(&imgOut, "teste.pgm");
+
+        return 0;
 
         // Execucao do programa para imagens em escala de cinza (PGM)
         if (imgIn.type[0] == 'P' && imgIn.type[1] == '2')
         {
-            copyImage(&imgIn, &imgOut); 
+            // copia a imagem original para a de saida
+            copyImageBord(&imgIn, &imgOut, bord);
 
-            
+            if (!filter.compare("media") || !filter.compare("Media") || !filter.compare("MEDIA"))
+            {
+                cout << "FILTER: " << filter << " MASK: " << mask << endl;
+
+                mediaFilter(&imgOut, mask_dim);
+            }
+
+            else if (!filter.compare("mediana") || !filter.compare("Mediana") || !filter.compare("MEDIANA"))
+            {
+                cout << "FILTER: " << filter << " MASK: " << mask << endl;
+                medianaFilter(&imgOut, mask_dim);
+            }
+
+            else if (!filter.compare("gauss") || !filter.compare("Gauss") || !filter.compare("GAUSS"))
+            {
+                cout << "FILTER: " << filter << " MASK: " << mask << endl;
+                gaussFilter(&imgOut, mask_dim);
+            }
+
+            else 
+            {
+                printf("\n== ERROR. USE 'media', 'mediana' OR 'gauss' AS TYPE OF FILTER ==\n\n");
+                return -1;
+            }
+
+            /*code here*/
 
             saveImage(&imgOut, output);
             printf("Done.\n");
         }
 
-        else printf("== IMAGE IS NOT IN PGM FORMAT (P2 format) ==\n\n");
+        else
+        {
+            printf("\n== IMAGE IS NOT IN PGM FORMAT (P2 format) ==\n\n");
+            return -1;
+        } 
 
         freeData(&imgIn);
         freeData(&imgOut);
 
         return 0;
     }
-
-    
 }

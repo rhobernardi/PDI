@@ -62,7 +62,7 @@ void freeData(Image *img);
  * @param imgOut    			Imagem de saida
  * @param in        			Nome do arquivo da imagem de entrada
  */
-void readImage(Image *imgIn, Image *imgOut, char *in);
+void readImage(Image *imgIn, Image *imgOut, char *in, int bord);
 
 /**
  * Cria um arquivo com o resultado guardado na matriz de imagem de saída.
@@ -97,51 +97,6 @@ void colorPixel(uchar *pixel, uchar tone);
 void processInversion(Image *imgIn, Image *imgOut);
 
 /**
- * Calcula a media aritmetica dos pixels.
- * 
- * @param imgIn         		Imagem de entrada
- * @param percent_vec   		Vetor de porcentagens de cada tom
- * @param n             		Tamanho do vetor de porcentagem
- * @return             			Media Aritmetica
- */
-double averageCalc(Image *img, double *percent_vec, int n);
-
-/**
- * Calcula o desvio padrao a partir da media.
- * 
- * @param imgIn         		Imagem de entrada
- * @param percent_vec   		Vetor de porcentagens de cada tom
- * @param average       		Media Aritmetica calculada
- * @param n             		Tamanho do vetor de porcentagem
- * @return              		Desvio Padrao
- */
-double standardDeviation(Image *img, double *percent_vec, double *average, int n);
-
-/**
- * Analiza frequencia para cada tonalidade de cinza e retorna vetor com indice indicando valores dos tons e suas porcentagens.
- * Retorna tambem o valor medio e o desvio padrao por referencia.
- * 
- * @param imgIn         		Imagem de entrada
- * @param percent_vec   		Vetor de porcentagens de cada tom
- * @param average       		Media Aritmetica calculada
- * @param stand_dev     		Desvio Padrao calculado
- */
-void analyzeFrequency(Image *img, double *percent_vec, double *average, double *stand_dev);
-
-/**
- * A partir de uma coordenada de entrada e um tom de cinza, a area de cores iguais a do pixel
- * da coordenada é colorida com o tom de entrada.
- * Algoritmo implementado com vizinhanca 4.
- * 
- * @param img                   Imagem de entrada
- * @param x                     Coordenada x
- * @param y                     Coordenada Y
- * @param target_tone           Tom a ser reposto
- * @param replacement_tone      Tom de reposicao
- */
-void floodFill(Image *img, unsigned int x, unsigned int y, uchar target_tone, uchar replacement_tone);
-
-/**
  * Apaga a imagem toda
  * 
  * @param img 					Imagem para manipulacao
@@ -163,53 +118,10 @@ void transposeImage (Image *img);
  */
 int stringToInteger(string str);
 
-/**
- * Encontra um objeto numa imagem com fundo branco
- * 
- * @param  img 					Imagem para manipulacao
- * @return     					Retorna objeto da imagem
- */
-unsigned char **searchObject(Image *img);
-
-/**
- * Move o objeto da imagem n pixels para direita ou para esquerda
- * 
- * @param img    				Imagem para manipulacao
- * @param pixels 				Numero de pixels que o objeto se desloca
- */
-void MH(Image *img, int pixels);
-
-/**
- * Move o objeto da imagem n pixels para cima ou para baixo
- * 
- * @param img    				Imagem para manipulacao
- * @param pixels 				Numero de pixels que o objeto se desloca
- */
-void MV(Image *img, int pixels);
-
-/**
- * Rotaciona o objeto em n graus
- * 
- * @param img    				Imagem para manipulacao
- * @param angl 					Valor do angulo de rotacao do objeto
- */
-void RO(Image *img, int angl);
-
-
-/**
- * Relfete o objeto da imagem na horizontal
- * 
- * @param img    				Imagem para manipulacao
- */
-void RH(Image *img);
-
-
-/**
- * Relfete o objeto da imagem na vertical
- * 
- * @param img    				Imagem para manipulacao
- */
-void RV(Image *img);
-
+void mediaFilter(Image *img, unsigned int mask);
+void medianaFilter(Image *img, unsigned int mask);
+void gaussFilter(Image *img, unsigned int mask);
+void saveImageBord (Image *img, const char *out, int bord); 
+void copyImageBord (Image *imgIn, Image *imgOut, int bord);
 
 #endif

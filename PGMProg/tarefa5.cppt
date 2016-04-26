@@ -1,0 +1,326 @@
+#include <algorithm>
+#include <iostream>
+#include <fstream>
+#include <vector>
+#include <string>
+#include <cstdio>
+#include <cmath>
+
+using namespace std;
+
+#define PI 3.14159265
+
+int main(int argc, char const *argv[])
+{
+	if(argc != 5){
+		cout << "\nExemplo:\n";
+		cout << "$./filtragem lena.pgm media 3 lena_saida.pgm \n";
+		cout << "$./filtragem lena.pgm gauss 2 lena_saida.pgm \n\n";
+	}else{
+		//argv[1] == lena.pgm
+		int **mat, **filter, **result, lines, columns, maxGreyValue, i, j, k, l, border; 
+		int maskSize, newMaskSize, fixerK = 0, fixerL = 0, value = 0, countX = 0, countY = 0;
+		float **gaussianFilter, precision = 0.001;;
+		double gAux, sum = 0.0, mean = 0.0;
+		string magicNumber, aux, filterType, outputName;
+		fstream file, output;
+		vector<int> mediana;
+
+		//recebe os valores do tipo de filtro e tamanho da mascara
+		filterType = argv[2];
+		maskSize = stoi(argv[3]);
+
+		//Tenta abrir o arquivo passado
+		file.open(argv[1]);
+		if(file.is_open()){
+			cout << "\n*****File: \'"<< argv[1] <<"\' opened!*****\n\n";
+
+			//----------------------------Leitura do arquivo---------------------------
+			//Evita qualquer comentario
+			file >> aux;
+			if(aux[0] == '#')
+				file >> magicNumber;
+			else
+				magicNumber = aux;
+
+			file >> aux;
+			if(aux[0] == '#')
+				file >> columns >> lines;
+			else{
+				file >> lines;
+				columns = stoi(aux);
+			}
+			//evita qualquer comentario
+
+
+
+			//descobrindo quantas linhas/colunas precisam ser adicionadas para a borda
+			if(filterType.compare("gauss") || filterType.compare("Gauss") || filterType.compare("GAUSS")){
+				border = (stoi(argv[3]) * 6) - 1;//por enquanto tamanho da mascara
+				border = floor(border/2);
+				border *= 2; //numero de linhas e colunas a ser adicionado para a matriz
+			}else{
+				border = floor(stoi(argv[3])/2);
+				//necessario dobrar pois a borda eh feita de 2*colunas e 2*linhas
+				border *= 2;
+			}
+
+			//evita comentarios
+			file >> aux;
+			if(aux[0] == '#')
+				file >> maxGreyValue;
+			else
+				maxGreyValue = stoi(aux);
+			//----------------------------Leitura do arquivo---------------------------
+
+
+			//----------------------------Alocacao_Leitura_Matriz----------------------
+			//alocacao da matriz para ler do arquivo
+			mat = (int **) calloc(lines + border, sizeof(int *));
+			for(i = 0; i < lines + border; i++){
+				mat[i] = (int*) calloc(columns + border, sizeof(int));
+			}
+
+			//recebe dados do arquivo na matriz
+			for(i = border/2; i < lines+border/2; i++){
+				for(j = border/2; j < columns+border/2; j++){
+					file >> mat[i][j];
+				}
+			}
+
+			//aloca a matriz resultado que ira conter as transformacoes
+			result = (int **) calloc(lines + border, sizeof(int *));
+			for(i = 0; i < lines + border; i++){
+				result[i] = (int *) calloc(columns + border, sizeof(int));
+			}
+
+			// for(i = 0; i < lines + border; i++){
+			// 	for(j = 0; j < columns + border; j++){
+			// 		cout << mat[i][j] << "\t";
+			// 		//cout << i << " | " << j << "\n";
+			// 	}
+			// 	cout << "\n";
+			// }
+
+			//----------------------------Alocacao_Leitura_Matriz----------------------
+
+			//----------------------------Mascaras-------------------------------------
+			// A ideia eh percorrer a matriz com a mascara
+			// No caso da media, a mascara usada eh uma do tipo passa baixa
+			// Com todas as suas linhas e colunas preenchidas com 1 (aritmetica)
+			if(filterType.compare("media") == 0){
+				filter = (int **) calloc(maskSize, sizeof(int *));
+				for(i = 0; i < maskSize; i++){
+					filter[i] = (int *) calloc(maskSize, sizeof(int));
+				}
+
+				//gera a mascara
+				for(i = 0; i < maskSize; i++){
+					for(j = 0; j < maskSize; j++){
+						filter[i][j] = 1;
+					}
+					cout << "\n";
+				}//gera a mascara
+
+				// Aplicacao do filtro eh utilizada percorrendo a mtariz da imagem com a mascara
+				// calculando o valor da posicao atual * 1
+				// e sempre somando ele para depois tirar a media
+				// e passar para a posicao na matriz resultado de forma apropriada
+				fixerK = 0; fixerL = 0;
+				for(i = 0; i < (lines + border) - maskSize; i++){
+					fixerL = 0;
+					for(j = 0; j < (columns + border) - maskSize; j++){
+						for(k = i; k < (maskSize + fixerK); k++){
+							for(l = j; l < (maskSize + fixerL); l++){
+								value += mat[k][l] * 1;
+							}
+						}
+						value /= pow(maskSize, 2);
+						result[k-1][l-1] = value;
+						fixerL++;
+					}
+					fixerK++;
+				}//aplicacao do filtro
+
+				//abrindo arquivo de saida
+				output.open(argv[4], fstream::out);
+				if(output.is_open()){ 
+					output << magicNumber << "\n";
+					output << columns << " " << lines << "\n"; 
+					output << maxGreyValue << "\n";
+
+					for(i = border/2 ; i < lines + border/2; i++){
+						for(j = border/2 ; j < columns + border/2; j++){
+							output << result[i][j] << " ";
+						}
+						output << "\n";
+					}
+					cout << "\n*****File: \'"<< argv[1] <<"\' closed!*****\n\n";
+				}else{
+					cout << "*****Could not open \'" << argv[4] << "\'*****\n\n";
+				}
+				//abrindo arquivo de saida
+
+				//liberando memoria alocada
+				output.close(); value = 0; fixerK = 0; fixerL = 0;
+				for(i = 0; i < maskSize; i++){
+					free(filter[i]);
+				}
+				free(filter);
+
+			}else if(filterType.compare("mediana") == 0){
+				// Percorro a matriz da mesma forma que percorro a media,
+				// porem o o calculo eh diferente, neste caso
+				// sempre adiciono os valores a um vetor
+				// ordeno-os e pego o valor central (mediana)
+				// e passo para a posicao correta na matriz result
+				filter = (int **) calloc(maskSize, sizeof(int *));
+				for(i = 0; i < maskSize; i++){
+					filter[i] = (int *) calloc(maskSize, sizeof(int));
+				}
+
+				//adiciona todos os valores da mascara no vetor enquanto caminha pela matriz 
+				for(i = 0 ; i < (lines+border) - maskSize; i++){
+					fixerL = 0;
+					for(j = 0 ; j < (columns+border) - maskSize; j++){
+						for(k = i; k < (maskSize + fixerK); k++){
+							for(l = j; l < (maskSize + fixerL); l++){
+								mediana.push_back(mat[k][l]);//coloca no vetor
+							}
+						}
+						fixerL++;
+						sort(mediana.begin(), mediana.end());//ordena o array
+						value = mediana[(mediana.size()/2) + 1];
+						result[k-1][l-1] = value;//pega o elemento central e passa para a matriz
+						mediana.clear();
+					}
+					fixerK++;
+				}
+
+				//abrindo arquivo de saida
+				output.open(argv[4], fstream::out);
+				if(output.is_open()){ 
+					output << magicNumber << "\n";
+					output << columns << " " << lines << "\n"; 
+					output << maxGreyValue << "\n";
+
+					for(i = border/2 ; i < lines + border/2; i++){
+						for(j = border/2 ; j < columns + border/2; j++){
+							output << result[i][j] << " ";
+						}
+						output << "\n";
+					}
+					cout << "\n*****File: \'"<< argv[1] <<"\' closed!*****\n\n";
+				}else{
+					cout << "*****Could not open \'" << argv[4] << "\'*****\n\n";
+				}
+				//abrindo arquivo de saida
+
+				//liberando memoria alocada
+				output.close(); value = 0; fixerK = 0; fixerL = 0;
+				for(i = 0; i < maskSize; i++){
+					free(filter[i]);
+				}	
+				free(filter);
+
+			}else{
+				//maskSize neste caso eh o sigma
+				//calcula tamanho da mascara
+				newMaskSize = (6 * maskSize) - 1;
+				mean = newMaskSize / 2;
+
+				//aloca mascara
+				gaussianFilter = (float **) calloc(newMaskSize, sizeof(float *));
+				for(i = 0; i < newMaskSize; i++){
+					gaussianFilter[i] = (float *) calloc(newMaskSize, sizeof(float));
+				}
+
+				//calculo da mascara
+				for(i = 0; i < newMaskSize; i++){
+					for(j = 0; j < newMaskSize; j++){
+						gaussianFilter[i][j] = exp( -0.5 * ( pow((i-mean)/maskSize, 2.0) + pow((j-mean)/maskSize, 2.0)) ) / ( 2 * PI * (maskSize * maskSize) );
+						sum += gaussianFilter[i][j];
+					}
+				}
+
+				//calculo da mascara
+				for(i = 0; i < newMaskSize; i++){
+					for(j = 0; j < newMaskSize; j++){
+						gaussianFilter[i][j] = gaussianFilter[i][j] / sum;
+						//cout << gaussianFilter[i][j] << "\t";	
+					}
+					//cout << "\n";
+				}
+
+				//convolucao
+				fixerL = (-1 * border/2);
+				fixerK = (-1 * border/2);
+				for(i = border/2 ; i < lines + border/2; i++){
+					for(j = border/2 ; j < columns + border/2; j++){
+						for(k = 0; k < newMaskSize; k++){
+							for(l = 0; l < newMaskSize; l++){							
+								value += (mat[i+fixerL][j+fixerK] * gaussianFilter[k][l]);
+								fixerK++;
+							}
+							fixerK = (-1 * border/2);
+							fixerL++;
+						}
+						fixerL = (-1 * border/2);
+						//value /= newMaskSize; 
+						result[i][j] = value;
+						value = 0;	
+					}
+				}
+
+
+				//abrindo arquivo de saida
+				output.open(argv[4], fstream::out);
+				if(output.is_open()){ 
+					output << magicNumber << "\n";
+					output << columns << " " << lines << "\n"; 
+					output << maxGreyValue << "\n";
+
+					for(i = border/2 ; i < lines + border/2; i++){
+						for(j = border/2 ; j < columns + border/2; j++){
+							output << result[i][j] << " ";
+						}
+						output << "\n";
+					}
+
+					cout << "\n*****File: \'"<< argv[1] <<"\' closed!*****\n\n";
+				}else{
+					cout << "*****Could not open \'" << argv[4] << "\'*****\n\n";
+				}//abrindo arquivo de saida
+
+				//liberando memoria alocada
+				output.close(); fixerL = 0; fixerK = 0; value = 0;
+				for(i = 0; i < newMaskSize; i++){
+					free(gaussianFilter[i]);
+				}	
+				free(gaussianFilter);
+
+			}
+			//----------------------------Mascaras-------------------------------------
+
+
+			//--------------------------------Liberando--------------------------------
+			for(i = 0; i < lines+border; i++){
+				free(mat[i]);
+			}
+			free(mat);
+
+			for(i = 0; i < lines; i++){
+				free(result[i]);
+			}
+			free(result);
+
+			file.close();
+			//--------------------------------Liberando--------------------------------
+
+		}else{
+			cout << "*****Could not open \'" << argv[1] << "\'*****\n\n";
+		}
+	}
+
+	return 0;
+}
