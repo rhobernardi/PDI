@@ -43,23 +43,27 @@ int main(int argc, char const *argv[])
         
         // converte o char de mask para um inteiro sem sinal
         unsigned int mask_dim = stringToInteger(mask);
-        
+        int tam = 0, bord = 0;
+
+        if (!filter.compare("gauss") || !filter.compare("Gauss") || !filter.compare("GAUSS"))
+        {
+            tam = (6*mask_dim)+1;
+        }
+
+        else tam = mask_dim;
+
         // calcula borda
-        int bord = 2*floor(mask_dim/2);
+        bord = 2*floor(tam/2);
 
         // Le a imagem de entrada e a transforma com borda de mask
         readImage(&imgIn, &imgOut, input, bord);
-        
-        //copyImageBord(&imgIn, &imgOut, bord);
 
-        //saveImage(&imgOut, "teste.pgm");
+        // copia a imagem original para a de saida
+        copyImageBord(&imgIn, &imgOut, bord);
 
         // Execucao do programa para imagens em escala de cinza (PGM)
         if (imgIn.type[0] == 'P' && imgIn.type[1] == '2')
         {
-            // copia a imagem original para a de saida
-            copyImageBord(&imgIn, &imgOut, bord);
-
             if (!filter.compare("media") || !filter.compare("Media") || !filter.compare("MEDIA"))
             {
                 cout << "FILTER: " << filter << " MASK: " << mask << endl;

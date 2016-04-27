@@ -271,19 +271,16 @@ void medianaFilter(Image *img, unsigned int mask, int bord)
                 for (int l = j; l < mask+incl; ++l)
                 {
                     values.push_back((int)img->pixel[k][l]);
-                    //cout << "img->pixel["<< k << "][" << l << "]: " << (int)img->pixel[k][l] << endl;
                 }
             }
 
             incl++;
 
-            //cout << "i+bord/2: " << i+1 << "j+bord/2: " << j+1 << endl;
-
-            //cout << img->height << endl;
-            //cout << "sum: " << sum/(mask*mask) << endl;
             sort(values.begin(), values.end());
             value = values[floor(values.size()/2)];
+
             img->pixel[i+bord/2][j+bord/2] = (int)value;
+
             values.clear();
         }
 
@@ -295,9 +292,80 @@ void medianaFilter(Image *img, unsigned int mask, int bord)
 
 
 
-void gaussFilter(Image *img, unsigned int mask, int bord)
+void gaussFilter(Image *img, unsigned int sigma, int bord)
 {
-    
+    // tamanho da mascara
+    unsigned int maskSize = (6*sigma)+1;
+    double sum = 0;
+    double pi = 3.14159265;
+
+    double **kernel = (double **) calloc(maskSize, sizeof(double*));
+    for (int i = 0; i < maskSize; ++i)
+    {
+        kernel[i] = (double *) calloc(maskSize, sizeof(double));
+    }
+
+    int average = maskSize/2;
+
+    for (int i = 0; i < maskSize; ++i)
+    {
+        for (int j = 0; j < maskSize; ++j)
+        {
+            kernel[i][j] = exp( -0.5 * ( pow((i-average)/maskSize, 2.0) + pow((j-average)/maskSize, 2.0)) ) / ( 2 * pi * (maskSize*maskSize) );
+            sum += kernel[i][j];
+        }
+    }
+
+    for (int i = 0; i < maskSize; ++i)
+    {
+        for (int j = 0; j < maskSize; ++j)
+        {
+            kernel[i][j] /= sum;
+        }
+    }
+
+    cout << "maskSize: " << maskSize << endl;
+    cout << "bord: " << bord << endl;
+
+    int inck = 0, incl = 0, x = 0, y = 0;
+    sum = 0;
+
+    for (int i = 0; i < img->height-maskSize; ++i)
+    {
+        incl = 0;
+        for (int j = 0; j < img->width-maskSize; ++j)
+        {
+            for (int k = i; k < maskSize+inck; ++k)
+            {
+                for (int l = j; l < maskSize+incl; ++l)
+                {
+                    if (x > maskSize-1)
+                    {
+                        x = 0;
+                    }
+
+                    if (y > maskSize-1)
+                    {
+                        y = 0;
+                    }
+
+                    sum += (double)img->pixel[k][l] * kernel[x][y];
+
+                    y++;
+                }
+
+                x++;
+            }
+
+            img->pixel[i+bord/2][j+bord/2] = (int)sum;
+
+            incl++;
+            sum = 0;
+        }
+
+        inck++;
+    }
+
 }
 
 

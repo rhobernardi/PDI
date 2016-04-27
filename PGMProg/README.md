@@ -9,6 +9,4 @@ Para compilar:
 
 Para rodar o programa:
 
-	$ ./filtragem image.pgm <comando> <mask> image_out.pgm
-
-Nota: 
+	$ ./filtragem image_in.pgm <filter> <mask> image_out.pgm
