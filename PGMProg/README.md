@@ -1,4 +1,4 @@
-#Tarefa 5 - Processamento de Imagem
+#Tarefa 6 - Processamento de Imagem
 
 - Rodrigo das Neves Bernardi - 8066395
 

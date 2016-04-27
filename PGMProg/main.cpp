@@ -2,7 +2,7 @@
 /*****************************************************************
 *
 *    SCC0251 - Processamento de Imagem
-*    Tarefa 5 - Filtros
+*    Tarefa 6 - 
 *
 *    -Rodrigo das Neves Bernardi - 8066395
 *

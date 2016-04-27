@@ -1,7 +1,7 @@
 
 CC = pdi.cpp main.cpp
 BIN = filtragem
-PZIP = 8066395_Tarefa5.zip
+PZIP = 8066395_Tarefa6.zip
 
 IN = image.pgm
 OUT = img_out.pgm
@@ -33,5 +33,5 @@ zip: clean
 push: clean
 	git add *
 	git status
-	git commit -m "Tarefa 5 em andamento"
+	git commit -m "Tarefa 6 em andamento"
 	git push
