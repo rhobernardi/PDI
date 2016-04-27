@@ -43,13 +43,15 @@ void allocData(Image *img, char* type, int width, int height, int maxVal);
 
 void freeData(Image *img);
 
-void readImage(Image *imgIn, Image *imgOut, char *in, int bord);
+void readImage(Image *imgIn, Image *imgOut, char *in);
 
 void saveImage(Image *img, const char *out);
 
-void saveImageBord (Image *img, const char *out, int bord);
-
 void copyImage(Image *imgIn, Image *imgOut);
+
+void readImageBord(Image *imgIn, Image *imgOut, char *in, int bord);
+
+void saveImageBord (Image *img, const char *out, int bord);
 
 void copyImageBord (Image *imgIn, Image *imgOut, int bord);
 

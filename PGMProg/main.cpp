@@ -56,7 +56,7 @@ int main(int argc, char const *argv[])
         bord = 2*floor(tam/2);
 
         // Le a imagem de entrada e a transforma com borda de mask
-        readImage(&imgIn, &imgOut, input, bord);
+        readImageBord(&imgIn, &imgOut, input, bord);
 
         // copia a imagem original para a de saida
         copyImageBord(&imgIn, &imgOut, bord);
