@@ -20,6 +20,9 @@
 #include <iostream>
 #include <sstream>
 #include <string>
+#include <vector>
+#include <algorithm>
+
 using namespace std;
 
 
@@ -118,9 +121,9 @@ void transposeImage (Image *img);
  */
 int stringToInteger(string str);
 
-void mediaFilter(Image *img, unsigned int mask);
-void medianaFilter(Image *img, unsigned int mask);
-void gaussFilter(Image *img, unsigned int mask);
+void mediaFilter(Image *img, unsigned int mask, int bord);
+void medianaFilter(Image *img, unsigned int mask, int bord);
+void gaussFilter(Image *img, unsigned int mask, int bord);
 void saveImageBord (Image *img, const char *out, int bord); 
 void copyImageBord (Image *imgIn, Image *imgOut, int bord);
 

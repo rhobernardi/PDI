@@ -50,11 +50,9 @@ int main(int argc, char const *argv[])
         // Le a imagem de entrada e a transforma com borda de mask
         readImage(&imgIn, &imgOut, input, bord);
         
-                                copyImageBord(&imgIn, &imgOut, bord);
+        //copyImageBord(&imgIn, &imgOut, bord);
 
-        saveImage(&imgOut, "teste.pgm");
-
-        return 0;
+        //saveImage(&imgOut, "teste.pgm");
 
         // Execucao do programa para imagens em escala de cinza (PGM)
         if (imgIn.type[0] == 'P' && imgIn.type[1] == '2')
@@ -65,20 +63,19 @@ int main(int argc, char const *argv[])
             if (!filter.compare("media") || !filter.compare("Media") || !filter.compare("MEDIA"))
             {
                 cout << "FILTER: " << filter << " MASK: " << mask << endl;
-
-                mediaFilter(&imgOut, mask_dim);
+                mediaFilter(&imgOut, mask_dim, bord);
             }
 
             else if (!filter.compare("mediana") || !filter.compare("Mediana") || !filter.compare("MEDIANA"))
             {
                 cout << "FILTER: " << filter << " MASK: " << mask << endl;
-                medianaFilter(&imgOut, mask_dim);
+                medianaFilter(&imgOut, mask_dim, bord);
             }
 
             else if (!filter.compare("gauss") || !filter.compare("Gauss") || !filter.compare("GAUSS"))
             {
                 cout << "FILTER: " << filter << " MASK: " << mask << endl;
-                gaussFilter(&imgOut, mask_dim);
+                gaussFilter(&imgOut, mask_dim, bord);
             }
 
             else 

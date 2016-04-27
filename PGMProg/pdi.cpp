@@ -130,8 +130,10 @@ void saveImage (Image *img, const char *out)
         {
             for (int j = 0; j < img->width; ++j)
             {
-                fprintf(output, "%hhu\n", img->pixel[i][j]);
+                fprintf(output, "%hhu ", img->pixel[i][j]);
             }
+
+            fprintf(output, "\n");
         }
     }
 
@@ -223,25 +225,77 @@ int stringToInteger(string str)
 
 
 
-void mediaFilter(Image *img, unsigned int mask)
+void mediaFilter(Image *img, unsigned int mask, int bord)
 {
+    int sum = 0, inck = 0, incl = 0;
 
+    for (int i = 0; i < img->height-mask; ++i)
+    {
+        incl = 0;
+        for (int j = 0; j < img->width-mask; ++j)
+        {
+            for (int k = i; k < mask+inck; ++k)
+            {
+                for (int l = j; l < mask+incl; ++l)
+                {
+                    sum += (int)img->pixel[k][l];
+                }
+            }
+
+            img->pixel[i+bord/2][j+bord/2] = (int)sum/(mask*mask);
+
+            incl++;
+            sum = 0;
+        }
+
+        inck++;
+    }
 }
 
 
 
 
 
-void medianaFilter(Image *img, unsigned int mask)
+void medianaFilter(Image *img, unsigned int mask, int bord)
 {
-    
+    vector<int> values;
+    int value = 0, inck = 0, incl = 0;
+
+    for (int i = 0; i < img->height-mask; ++i)
+    {
+        incl = 0;
+        for (int j = 0; j < img->width-mask; ++j)
+        {
+            for (int k = i; k < mask+inck; ++k)
+            {
+                for (int l = j; l < mask+incl; ++l)
+                {
+                    values.push_back((int)img->pixel[k][l]);
+                    //cout << "img->pixel["<< k << "][" << l << "]: " << (int)img->pixel[k][l] << endl;
+                }
+            }
+
+            incl++;
+
+            //cout << "i+bord/2: " << i+1 << "j+bord/2: " << j+1 << endl;
+
+            //cout << img->height << endl;
+            //cout << "sum: " << sum/(mask*mask) << endl;
+            sort(values.begin(), values.end());
+            value = values[floor(values.size()/2)];
+            img->pixel[i+bord/2][j+bord/2] = (int)value;
+            values.clear();
+        }
+
+        inck++;
+    }
 }
 
 
 
 
 
-void gaussFilter(Image *img, unsigned int mask)
+void gaussFilter(Image *img, unsigned int mask, int bord)
 {
     
 }
@@ -268,8 +322,10 @@ void saveImageBord (Image *img, const char *out, int bord)
         {
             for (int j = 0/*bord/2*/; j < img->width/*+(bord/2)*/; ++j)
             {
-                fprintf(output, "%hhu\n", img->pixel[i][j]);
+                fprintf(output, "%hhu ", img->pixel[i][j]);
             }
+
+            fprintf(output, "\n");
         }
     }
 
@@ -295,7 +351,6 @@ void copyImageBord (Image *imgIn, Image *imgOut, int bord)
                 }
             }
 
-//cout << "foi1" << endl;
             if (i == imgIn->height-1)
             {
                 for (int k = 1; k <= bord/2; ++k)
@@ -303,7 +358,7 @@ void copyImageBord (Image *imgIn, Image *imgOut, int bord)
                     imgOut->pixel[i+(bord/2)+k][(j+(bord/2))] = imgIn->pixel[i][j];
                 }   
             }
-//cout << "foi2" << endl;
+
             if (j == 0)
             {
                 for (int k = 1; k <= bord/2; ++k)
@@ -311,14 +366,51 @@ void copyImageBord (Image *imgIn, Image *imgOut, int bord)
                     imgOut->pixel[i+(bord/2)][j+(bord/2)-k] = imgIn->pixel[i][j];
                 }
             }
-//cout << "foi3" << endl;
+
             if (j == imgIn->width-1)
             {
                 for (int k = 1; k <= bord/2; ++k)
                 {
                     imgOut->pixel[i+(bord/2)][j+(bord/2)+k] = imgIn->pixel[i][j];
-                }   
+                }
             }
-//cout << "foi4" << endl;
+
+            if (i == 0 && j == 0)
+            {
+                for (int k = 1; k <= bord/2; ++k)
+                {
+                    for (int l = 0; l <= bord/2; ++l)
+                        imgOut->pixel[i+(bord/2)-k][j+(bord/2)-l] = imgIn->pixel[i][j];
+                }
+            }
+
+            if (i == 0 && j == imgIn->width-1)
+            {
+                for (int k = 1; k <= bord/2; ++k)
+                {
+                    for (int l = 0; l <= bord/2; ++l)
+                        imgOut->pixel[i+(bord/2)-k][j+(bord/2)+l] = imgIn->pixel[i][j];
+                }
+            }
+
+            if (i == imgIn->height-1 && j == 0)
+            {
+                for (int k = 1; k <= bord/2; ++k)
+                {
+                    for (int l = 0; l <= bord/2; ++l)
+                        imgOut->pixel[i+(bord/2)+k][j+(bord/2)-l] = imgIn->pixel[i][j];
+                }
+            }
+
+            if (i == imgIn->height-1 && j == imgIn->width-1)
+            {
+                for (int k = 1; k <= bord/2; ++k)
+                {
+                    for (int l = 0; l <= bord/2; ++l)
+                    {
+                        imgOut->pixel[i+(bord/2)+k][j+(bord/2)+l] = imgIn->pixel[i][j];
+                    }
+                }
+            }
         }
 }
