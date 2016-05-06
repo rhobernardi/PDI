@@ -25,7 +25,7 @@ clean:
 
 zip: clean
 	@rm -f $(PZIP)
-	@zip -r $(PZIP) $(CC) Makefile README.md *.hpp
+	@zip -r $(PZIP) src/ build/ Makefile README.md images/chessboard1.png
 
 run:
 	@./$(BIN) $(IN)
