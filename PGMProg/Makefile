@@ -10,7 +10,6 @@ OUT = img_out.pgm
 
 all: compile run
 
-
 compile:
 	@sh compile.sh
 
