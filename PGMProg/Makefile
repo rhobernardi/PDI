@@ -1,6 +1,6 @@
 
 CC = pdi.cpp main.cpp
-BIN = DisplayImage
+BIN = DisplayLines
 PZIP = 8066395_Tarefa6.zip
 
 IN = images/chessboard1.png
