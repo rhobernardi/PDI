@@ -1,10 +1,9 @@
 
-CC = pdi.cpp main.cpp
+CC = src/main.cpp
 BIN = DisplayLines
 PZIP = 8066395_Tarefa6.zip
 
 IN = images/chessboard1.png
-OUT = img_out.pgm
 
 
 
@@ -20,6 +19,7 @@ clean:
 	@find -name "*~" | xargs rm -rf
 	@find -name $(BIN) | xargs rm -rf
 	@find -name $(OUT) | xargs rm -rf
+	@find -name ./bin/ | xargs rm -rf
 	@find -name obj_marked.pgm | xargs rm -rf
 
 zip: clean
