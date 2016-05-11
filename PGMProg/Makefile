@@ -31,6 +31,6 @@ run:
 
 push:
 	git add *
-	git commit -m "Tarefa 6 em andamento."
 	git status
+	git commit -m "Tarefa 6 em andamento."
 	git push
