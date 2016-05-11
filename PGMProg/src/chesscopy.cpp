@@ -52,7 +52,6 @@ int main( int argc, char** argv )
         }else{
           line(image, pt1, pt2, Scalar(255, 0, 0), 3, 8);
         }
-
         
     //  if(i == 5 || (i >= 11 && i < lines.size())){
     //     float rho = lines[i][0];
