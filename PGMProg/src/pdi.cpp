@@ -12,535 +12,212 @@
 
 
 /**
- * Aloca memória necessária para uma Image, recebendo suas informações
+ * This function allows the user to paint lines on a specific image 
+ * using hough transform
  * 
- * @param img       			Imagem de entrada
- * @param type      			Tipo (P1,P2,P3,P4,P5,P6)
- * @param width     			Largura
- * @param height    			Altura
- * @param maxVal    			Valor maximo do tom de cinza
+ * @param image [description]
+ * @param lines [description]
  */
-void allocData (Image *img, char* type, int width, int height, int maxVal) 
+void generateLines( Mat image, vector<Vec2f> lines )
 {
-    strcpy(img->type, type);
-    img->width = width;
-    img->height = height;
-    img->maxVal = maxVal;
+    float radius, t_angle; 
+    double x0, y0, x1, y1, x2, y2, a, b, angle;
+    vector<Point> H_points, V_points;
+    vector<Point> B, G, R;
 
-    if(img->type[0] == 'P' && img->type[1] == '2') 
+    for( unsigned int i = 0; i < lines.size(); i++ )
     {
-        img->pixel = (uchar**) malloc(height * sizeof(uchar*));
+        radius = lines[i][0];
+        t_angle = lines[i][1];
 
-        for (int i = 0; i < height; ++i)
+        a = cos(t_angle);
+        b = sin(t_angle);
+
+        x0 = radius * a;
+        y0 = radius * b;
+
+        x1 = cvRound( x0 + 1000 * (-b) );
+        y1 = cvRound( y0 + 1000 * (a) );
+
+        x2 = cvRound( x0 - 1000 * (-b) );
+        y2 = cvRound( y0 - 1000 * (a) );
+
+        Point point_1( cvRound( x0 + 1000 * (-b) ), cvRound( y0 + 1000 * (a) ) );
+        Point point_2( cvRound( x0 - 1000 * (-b) ), cvRound( y0 - 1000 * (a) ) );
+
+        angle = atan2(y2 - y1, x2 - x1) * 180.0 / CV_PI;
+        if( angle == 0 )
         {
-            img->pixel[i] = (uchar*) malloc(width * sizeof(uchar));
+            H_points.push_back( point_1 );
+            H_points.push_back( point_2 );
+        }
+
+        if( (angle > 70 || angle < -60) ) 
+        {
+            V_points.push_back( point_1 );
+            V_points.push_back( point_2 );
         }
     }
-}
 
 
-/**
- * Libera memória usada por uma Image.
- * 
- * @param img   				Imagem de entrada
- */
-void freeData (Image *img) 
-{    
-    if (img->type[0] == 'P' && img->type[1] == '2') 
-    {
-        for (int i = 0; i < img->height; ++i)
-        {
-            free(img->pixel[i]);
-        }
-
-        free(img->pixel);
-    }
-}
-
-
-/**
- * Cria uma estrutura Image, incluindo a leitura do arquivo e a chamada da função para alocar a imagem na memória.
- * 
- * @param imgIn     			Imagem de entrada
- * @param imgOut    			Imagem de saida
- * @param in        			Nome do arquivo da imagem de entrada
- */
-void readImage (Image *imgIn, Image *imgOut, char *in) 
-{
-    FILE *input;
-    char type[3];
-    int maxVal, width, height;
-
-    input = fopen(in, "r");
-
-    if (input == NULL)
-        printf("== ERROR. CAN'T READ IMAGE FILE ==\n\n");
+    B.push_back( V_points[2] );
+    B.push_back( V_points[3] );
+    B.push_back( V_points[8] );
+    B.push_back( V_points[9] );
+    B.push_back( V_points[10] );
+    B.push_back( V_points[11] );
+    B.push_back( V_points[14] );
+    B.push_back( V_points[15] );
+    B.push_back( V_points[18] );
+    B.push_back( V_points[19] );
+    B.push_back( V_points[20] );
+    B.push_back( V_points[21] );
+    B.push_back( V_points[22] );
+    B.push_back( V_points[23] );
     
-    else 
-    {
-        // le tipo
-        rewind(input);
-        fscanf(input, "%s", type);
-
-        // compara tipo para ver se é pgm (escala de cinza)
-        if(type[0] == 'P' && type[1] == '2') 
-        {
-            // pula fim da linha
-            while (getc(input) != '\n');
-
-            // pula comentario da linha
-            while (getc(input) == '#') 
-            {
-                while (getc(input) != '\n');
-            }
-
-            // volta um caracter
-            fseek(input, -1, SEEK_CUR);
-
-            // le dimensões da imagem e a escala das cores
-            fscanf(input, "%d", &width);
-            fscanf(input, "%d", &height);
-            fscanf(input, "%d", &maxVal);
-
-            // aloca as matrizes width x height das imagens de entrada e saída na memória
-            allocData(imgIn, type, width, height, maxVal);
-            allocData(imgOut, type, width, height, maxVal);
-            
-            // le dados do arquivo
-            for(int i = 0; i < height ; ++i)
-            {
-                for (int j = 0; j < width; ++j)
-                {
-                    // fscanf(input, "%hhu %hhu %hhu", &(imgIn->data->r[i]), &(imgIn->data->g[i]), &(imgIn->data->b[i]));
-                    fscanf(input, "%hhu\n", &(imgIn->pixel[i][j]));
-                }
-            }
-        }
-    }
-
-    fclose(input);
-}
-
-
-/**
- * Cria uma estrutura Image, incluindo a leitura do arquivo e a chamada da função para alocar a imagem na memória.
- * 
- * @param imgIn     			Imagem de entrada
- * @param imgOut    			Imagem de saida
- * @param in        			Nome do arquivo da imagem de entrada
- * @param bord 					Borda da imagem
- */
-void readImageBord (Image *imgIn, Image *imgOut, char *in, int bord) 
-{
-    FILE *input;
-    char type[3];
-    int maxVal, width, height;
-
-    input = fopen(in, "r");
-
-    if (input == NULL)
-        printf("== ERROR. CAN'T READ IMAGE FILE ==\n\n");
+    B[0].x = B[0].x + 140;
+    B[0].y = B[0].y + 1150;
+    B[1].x = B[1].x - 59;
+    B[1].y = B[1].y - 495;
+    line(image, B[0], B[1], Scalar(255, 0, 0), 3, LINE_AA);
     
-    else 
-    {
-        // le tipo
-        rewind(input);
-        fscanf(input, "%s", type);
-
-        // compara tipo para ver se é pgm (escala de cinza)
-        if(type[0] == 'P' && type[1] == '2') 
-        {
-            // pula fim da linha
-            while (getc(input) != '\n');
-
-            // pula comentario da linha
-            while (getc(input) == '#') 
-            {
-                while (getc(input) != '\n');
-            }
-
-            // volta um caracter
-            fseek(input, -1, SEEK_CUR);
-
-            // le dimensões da imagem e a escala das cores
-            fscanf(input, "%d", &width);
-            fscanf(input, "%d", &height);
-            fscanf(input, "%d", &maxVal);
-
-            // aloca as matrizes width x height das imagens de entrada e saída na memória
-            allocData(imgIn, type, width, height, maxVal);
-            allocData(imgOut, type, width + bord, height + bord, maxVal);
-            
-            // le dados do arquivo
-            for(int i = 0; i < height ; ++i)
-            {
-                for (int j = 0; j < width; ++j)
-                {
-                    // fscanf(input, "%hhu %hhu %hhu", &(imgIn->data->r[i]), &(imgIn->data->g[i]), &(imgIn->data->b[i]));
-                    fscanf(input, "%hhu\n", &(imgIn->pixel[i][j]));
-                }
-            }
-        }
-    }
-
-    fclose(input);
-}
-
-
-/**
- * Cria um arquivo com o resultado guardado na matriz de imagem de saída.
- * 
- * @param img   				Imagem de entrada
- * @param out   				Nome do arquivo da imagem de saida
- */
-void saveImage (Image *img, const char *out) 
-{
-    FILE *output;
-
-    // escreve header contendo tipo, comentário, dimensões e escala
-    output = fopen(out, "w");
-    fprintf(output, "%s\n", img->type);
-    fprintf(output, "# imagem gerada pelo programa\n");
-    fprintf(output, "%d %d\n", img->width, img->height);
-    fprintf(output, "%d\n", img->maxVal);
-
-    // escreve dados da imagem 
-    if(img->type[0] == 'P' && img->type[1] == '2') 
-    {
-        for (int i = 0; i < img->height; ++i)
-        {
-            for (int j = 0; j < img->width; ++j)
-            {
-                fprintf(output, "%hhu ", img->pixel[i][j]);
-            }
-
-            fprintf(output, "\n");
-        }
-    }
-
-    fclose(output);
-}
-
-
-void saveImageBord (Image *img, const char *out, int bord)
-{
-    FILE *output;
-
-    // escreve header contendo tipo, comentário, dimensões e escala
-    output = fopen(out, "w");
-    fprintf(output, "%s\n", img->type);
-    fprintf(output, "# imagem gerada pelo programa\n");
-    fprintf(output, "%d %d\n", img->width, img->height);
-    fprintf(output, "%d\n", img->maxVal);
-
-    // escreve dados da imagem 
-    if(img->type[0] == 'P' && img->type[1] == '2') 
-    {
-        for (int i = 0 /*bord/2*/; i < img->height/*+(bord/2)*/; ++i)
-        {
-            for (int j = 0/*bord/2*/; j < img->width/*+(bord/2)*/; ++j)
-            {
-                fprintf(output, "%hhu ", img->pixel[i][j]);
-            }
-
-            fprintf(output, "\n");
-        }
-    }
-
-    fclose(output);
-}
-
-
-/**
- * Copia a imagem de entrada para a imagem de saida.
- * 
- * @param imgIn     			Imagem de entrada
- * @param imgOut    			Imagem de saida
- */
-void copyImage (Image *imgIn, Image *imgOut)
-{
-    for(int i = 0; i < imgIn->height; ++i)
-        for (int j = 0; j < imgIn->width; ++j)
-        {
-            imgOut->pixel[i][j] = imgIn->pixel[i][j];
-        }
-}
-
-
-void copyImageBord (Image *imgIn, Image *imgOut, int bord)
-{
-    for(int i = 0; i < imgIn->height; ++i)
-        for (int j = 0; j < imgIn->width; ++j)
-        {
-            imgOut->pixel[i+(bord/2)][j+(bord/2)] = imgIn->pixel[i][j];
-
-            if (i == 0)
-            {
-                for (int k = 1; k <= bord/2; ++k)
-                {
-                    imgOut->pixel[i+(bord/2)-k][(j+(bord/2))] = imgIn->pixel[i][j];
-                }
-            }
-
-            if (i == imgIn->height-1)
-            {
-                for (int k = 1; k <= bord/2; ++k)
-                {
-                    imgOut->pixel[i+(bord/2)+k][(j+(bord/2))] = imgIn->pixel[i][j];
-                }   
-            }
-
-            if (j == 0)
-            {
-                for (int k = 1; k <= bord/2; ++k)
-                {
-                    imgOut->pixel[i+(bord/2)][j+(bord/2)-k] = imgIn->pixel[i][j];
-                }
-            }
-
-            if (j == imgIn->width-1)
-            {
-                for (int k = 1; k <= bord/2; ++k)
-                {
-                    imgOut->pixel[i+(bord/2)][j+(bord/2)+k] = imgIn->pixel[i][j];
-                }
-            }
-
-            if (i == 0 && j == 0)
-            {
-                for (int k = 1; k <= bord/2; ++k)
-                {
-                    for (int l = 0; l <= bord/2; ++l)
-                        imgOut->pixel[i+(bord/2)-k][j+(bord/2)-l] = imgIn->pixel[i][j];
-                }
-            }
-
-            if (i == 0 && j == imgIn->width-1)
-            {
-                for (int k = 1; k <= bord/2; ++k)
-                {
-                    for (int l = 0; l <= bord/2; ++l)
-                        imgOut->pixel[i+(bord/2)-k][j+(bord/2)+l] = imgIn->pixel[i][j];
-                }
-            }
-
-            if (i == imgIn->height-1 && j == 0)
-            {
-                for (int k = 1; k <= bord/2; ++k)
-                {
-                    for (int l = 0; l <= bord/2; ++l)
-                        imgOut->pixel[i+(bord/2)+k][j+(bord/2)-l] = imgIn->pixel[i][j];
-                }
-            }
-
-            if (i == imgIn->height-1 && j == imgIn->width-1)
-            {
-                for (int k = 1; k <= bord/2; ++k)
-                {
-                    for (int l = 0; l <= bord/2; ++l)
-                    {
-                        imgOut->pixel[i+(bord/2)+k][j+(bord/2)+l] = imgIn->pixel[i][j];
-                    }
-                }
-            }
-        }
-}
-
-
-/**
- * Mudar cor do pixel
- * 
- * @param pixel     			Pixel de entrada
- * @param tone      			Tom de cinza para o qual quer mudar
- */
-void colorPixel (uchar *pixel, uchar tone)
-{
-    (*pixel) = tone;
-}
-
-
-/**
- * Inverte as tonalidades de cor da imagem original.
- * 
- * @param imgIn     			Imagem de entrada
- * @param imgOut    			Imagem de saida
- */
-void processInversion (Image *imgIn, Image *imgOut)
-{
-    for (int i = 0; i < imgIn->height; ++i) 
-        for (int j = 0; j < imgIn->width; ++j)
-        {
-            imgOut->pixel[i][j] = imgIn->pixel[i][j];
-            colorPixel(&imgOut->pixel[i][j], imgIn->maxVal - imgOut->pixel[i][j]);
-        }
-}
-
-
-/**
- * Transpoe a matriz de imagem de entrada
- * 
- * @param img 					Imagem de entrada
- */
-void transposeImage (Image *img)
-{
-    int aux;
-
-    for (int i = 0; i < img->height; ++i)
-        for (int j = i+1; j < img->width; ++j)
-            if (j != i)
-            {
-                aux = img->pixel[i][j];
-                img->pixel[i][j] = img->pixel[j][i];
-                img->pixel[j][i] = aux;
-            }
-}
-
-
-/**
- * Converte numero no formato de string para inteiro
- * 
- * @param  str 					String de entrada
- * @return     					Retorna inteiro da string
- */
-int stringToInteger (string str)
-{
-    istringstream iss(str);
-    int retorno;
-    iss >> retorno;
-    return retorno;
-}
-
-
-void mediaFilter (Image *img, unsigned int mask, int bord)
-{
-    int sum = 0, inck = 0, incl = 0;
-
-    for (int i = 0; i < img->height-mask; ++i)
-    {
-        incl = 0;
-        for (int j = 0; j < img->width-mask; ++j)
-        {
-            for (int k = i; k < mask+inck; ++k)
-            {
-                for (int l = j; l < mask+incl; ++l)
-                {
-                    sum += (int)img->pixel[k][l];
-                }
-            }
-
-            img->pixel[i+bord/2][j+bord/2] = (int)sum/(mask*mask);
-
-            incl++;
-            sum = 0;
-        }
-
-        inck++;
-    }
-}
-
-
-void medianaFilter (Image *img, unsigned int mask, int bord)
-{
-    vector<int> values;
-    int value = 0, inck = 0, incl = 0;
-
-    for (int i = 0; i < img->height-mask; ++i)
-    {
-        incl = 0;
-        
-        for (int j = 0; j < img->width-mask; ++j)
-        {
-            for (int k = i; k < mask+inck; ++k)
-            {
-                for (int l = j; l < mask+incl; ++l)
-                {
-                    values.push_back((int)img->pixel[k][l]);
-                }
-            }
-
-            incl++;
-
-            sort(values.begin(), values.end());
-            value = values[floor(values.size()/2)];
-
-            img->pixel[i+bord/2][j+bord/2] = (int)value;
-
-            values.clear();
-        }
-
-        inck++;
-    }
-}
-
-
-void gaussFilter (Image *img, unsigned int sigma, int bord)
-{
-    // tamanho da mascara
-    unsigned int maskSize = (6*sigma)+1;
-    double sum = 0;
-    double pi = 3.14159265;
-
-    double **kernel = (double **) calloc(maskSize, sizeof(double*));
-    for (int i = 0; i < maskSize; ++i)
-    {
-        kernel[i] = (double *) calloc(maskSize, sizeof(double));
-    }
-
-    int average = maskSize/2;
-
-    for (int i = 0; i < maskSize; ++i)
-    {
-        for (int j = 0; j < maskSize; ++j)
-        {
-            kernel[i][j] = exp( -0.5 * ( pow((i-average)/maskSize, 2.0) + pow((j-average)/maskSize, 2.0)) ) / ( 2 * pi * (maskSize*maskSize) );
-            sum += kernel[i][j];
-        }
-    }
-
-    for (int i = 0; i < maskSize; ++i)
-    {
-        for (int j = 0; j < maskSize; ++j)
-        {
-            kernel[i][j] /= sum;
-        }
-    }
-
-    int inck = 0, incl = 0, x = 0, y = 0;
-    sum = 0;
-
-    for (int i = 0; i < img->height-maskSize; ++i)
-    {
-        incl = 0;
-        for (int j = 0; j < img->width-maskSize; ++j)
-        {
-            for (int k = i; k < maskSize+inck; ++k)
-            {
-                for (int l = j; l < maskSize+incl; ++l)
-                {
-                    if (x > maskSize-1)
-                    {
-                        x = 0;
-                    }
-
-                    if (y > maskSize-1)
-                    {
-                        y = 0;
-                    }
-
-                    sum += (double)img->pixel[k][l] * kernel[x][y];
-
-                    y++;
-                }
-
-                x++;
-            }
-
-            img->pixel[i+bord/2][j+bord/2] = (int)sum;
-
-            incl++;
-            sum = 0;
-        }
-
-        inck++;
-    }
+    B[2].x = B[2].x + 80;
+    B[2].y = B[2].y + 1125;
+    B[3].x = B[3].x - 39;
+    B[3].y = B[3].y - 531;
+    line(image, B[2], B[3], Scalar(255, 0, 0), 3, LINE_AA);
+    
+    B[4].x = B[4].x + 205;
+    B[4].y = B[4].y + 1175;
+    B[5].x = B[5].x - 80;
+    B[5].y = B[5].y - 455;
+    line(image, B[4], B[5], Scalar(255, 0, 0), 3, LINE_AA);
+    
+    B[6].x = B[6].x + 20;
+    B[6].y = B[6].y + 1100;
+    B[7].x = B[7].x - 10;
+    B[7].y = B[7].y - 555;
+    line(image, B[6], B[7], Scalar(255, 0, 0), 3, LINE_AA);
+    
+    B[8].x = B[8].x + 92;
+    B[8].y = B[8].y - 590;
+    B[9].x = B[9].x - 165;
+    B[9].y = B[9].y + 1045;
+    line(image, B[8], B[9], Scalar(255, 0, 0), 3, LINE_AA);
+    
+    B[10].x = B[10].x + 62;
+    B[10].y = B[10].y - 590;
+    B[11].x = B[11].x - 110;
+    B[11].y = B[11].y + 1060;
+    line(image, B[10], B[11], Scalar(255, 0, 0), 3, LINE_AA);
+    
+    B[12].x = B[12].x + 21;
+    B[12].y = B[12].y - 574;
+    B[13].x = B[13].x - 38;
+    B[13].y = B[13].y + 1080;
+    line(image, B[12], B[13], Scalar(255, 0, 0), 3, LINE_AA);
+ 
+
+
+    G.push_back( H_points[2] );
+    G.push_back( H_points[3] );
+    G.push_back( H_points[6] );
+    G.push_back( H_points[7] );
+    G.push_back( H_points[8] );
+    G.push_back( H_points[9] );
+    G.push_back( H_points[10] );
+    G.push_back( H_points[11] );
+    G.push_back( H_points[12] );
+    G.push_back( H_points[13] );
+    G.push_back( H_points[14] );
+    G.push_back( H_points[15] );
+    G.push_back( H_points[16] );
+    G.push_back( H_points[17] );
+
+    G[0].x = G[0].x + 1150;
+    G[1].x = G[1].x - 360;
+    line(image, G[0], G[1], Scalar(0, 255, 0), 3, LINE_AA);
+    
+    G[2].x = G[2].x + 1135;
+    G[3].x = G[3].x - 340;
+    line(image, G[2], G[3], Scalar(0, 255, 0), 3, LINE_AA);
+
+    G[4].x = G[4].x + 1155;
+    G[5].x = G[5].x - 370;
+    line(image, G[4], G[5], Scalar(0, 255, 0), 3, LINE_AA);
+    
+    G[6].x = G[6].x + 1125;
+    G[7].x = G[7].x - 330;
+    line(image, G[6], G[7], Scalar(0, 255, 0), 3, LINE_AA);
+    
+    G[8].x = G[8].x + 1140;
+    G[9].x = G[9].x - 350;
+    line(image, G[8], G[9], Scalar(0, 255, 0), 3, LINE_AA);
+    
+    G[10].x = G[10].x + 1115;
+    G[11].x = G[11].x - 325;
+    line(image, G[10], G[11], Scalar(0, 255, 0), 3, LINE_AA);
+
+    G[12].x = G[12].x + 1105;
+    G[13].x = G[13].x - 310;
+    line(image, G[12], G[13], Scalar(0, 255, 0), 3, LINE_AA);
+    
+
+
+    R.push_back( H_points[0] );
+    R.push_back( H_points[1] );
+    R.push_back( H_points[4] );
+    R.push_back( H_points[5] );
+    R.push_back( H_points[18] );
+    R.push_back( H_points[19] );
+    R.push_back( H_points[22] );
+    R.push_back( H_points[23] );
+    R.push_back( V_points[0] );
+    R.push_back( V_points[1] );
+    R.push_back( V_points[4] );
+    R.push_back( V_points[5] );
+    R.push_back( V_points[12] );
+    R.push_back( V_points[13] );
+    R.push_back( V_points[44] );
+    R.push_back( V_points[45] );
+
+    R[0].x = R[0].x + 1020;
+    R[1].x = R[1].x - 218;
+    line(image, R[0], R[1], Scalar(0, 0, 255), 3, LINE_AA);
+    
+    R[2].x = R[2].x + 1090;
+    R[3].x = R[3].x - 295;
+    line(image, R[2], R[3], Scalar(0, 0, 255), 3, LINE_AA);
+    
+    R[4].x = R[4].x + 1125;
+    R[5].x = R[5].x - 330;
+    line(image, R[4], R[5], Scalar(0, 0, 255), 3, LINE_AA);
+
+    R[6].x = R[6].x + 1165;
+    R[7].x = R[7].x - 375;
+    line(image, R[6], R[7], Scalar(0, 0, 255), 3, LINE_AA);
+    
+    R[8].x = R[8].x + 122;
+    R[8].y = R[8].y - 580;
+    R[9].x = R[9].x - 220;
+    R[9].y = R[9].y + 1035;
+    line(image, R[8], R[9], Scalar(0, 0, 255), 3, LINE_AA);
+
+    R[10].x = R[10].x + 275;
+    R[10].y = R[10].y + 1200;
+    R[11].x = R[11].x - 95;
+    R[11].y = R[11].y - 405;
+    line(image, R[10], R[11], Scalar(0, 0, 255), 3, LINE_AA);
+    
+    R[12].x = R[12].x + 130;
+    R[12].y = R[12].y - 522;
+    R[13].x = R[13].x - 250;
+    R[13].y = R[13].y + 1005;
+    line(image, R[12], R[13], Scalar(0, 0, 255), 3, LINE_AA);
+
+    R[14].x = R[14].x + 313;
+    R[14].y = R[14].y + 1200;
+    R[15].x = R[15].x - 92;
+    R[15].y = R[15].y - 320;
+    line(image, R[14], R[15], Scalar(0, 0, 255), 3, LINE_AA);
 }

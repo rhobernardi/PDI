@@ -12,62 +12,18 @@
 #define _PDI_HPP_
 
 
-#include <cstdlib>
-#include <cstdio>
-#include <cstring>
-#include <cmath>
-
+#include <opencv2/opencv.hpp>
 #include <iostream>
 #include <sstream>
 #include <string>
 #include <vector>
-#include <algorithm>
+#include <array>
 
 using namespace std;
+using namespace cv;
 
 
-
-typedef unsigned char uchar;
-
-typedef struct IMGstructure {
-    char type[3];
-    int width;
-    int height;
-    int maxVal;
-    uchar **pixel;
-} Image;
-
-
-
-void allocData(Image *img, char* type, int width, int height, int maxVal);
-
-void freeData(Image *img);
-
-void readImage(Image *imgIn, Image *imgOut, char *in);
-
-void saveImage(Image *img, const char *out);
-
-void copyImage(Image *imgIn, Image *imgOut);
-
-void readImageBord(Image *imgIn, Image *imgOut, char *in, int bord);
-
-void saveImageBord (Image *img, const char *out, int bord);
-
-void copyImageBord (Image *imgIn, Image *imgOut, int bord);
-
-void colorPixel(uchar *pixel, uchar tone);
-
-void processInversion(Image *imgIn, Image *imgOut);
-
-void transposeImage (Image *img);
-
-int stringToInteger(string str);
-
-void mediaFilter(Image *img, unsigned int mask, int bord);
-
-void medianaFilter(Image *img, unsigned int mask, int bord);
-
-void gaussFilter(Image *img, unsigned int mask, int bord);
+void generateLines( Mat, vector<Vec2f> );
 
 
 #endif

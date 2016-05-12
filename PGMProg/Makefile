@@ -4,13 +4,14 @@ BIN = DisplayLines
 PZIP = 8066395_Tarefa6.zip
 
 IN = images/chessboard1.png
-
+OUT = images/chessboard_out.png
 
 
 all: compile run
 
 compile:
 	@sh compile.sh
+	#@clear
 
 debug: compile
 	valgrind -v --leak-check=full --show-leak-kinds=all ./$(BIN) $(IN)
@@ -27,7 +28,7 @@ zip: clean
 	@zip -r $(PZIP) src/ build/ Makefile README.md images/chessboard1.png
 
 run:
-	@./$(BIN) $(IN)
+	@./$(BIN) $(IN) $(OUT)
 
 push:
 	git add *
