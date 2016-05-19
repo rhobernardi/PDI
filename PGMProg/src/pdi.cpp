@@ -4,7 +4,8 @@
 *    SCC0251 - Processamento de Imagem
 *    Arquivo pdi.cpp - Funcoes implementadas
 *
-*    -Rodrigo das Neves Bernardi - 8066395
+*    -Gabriel Estrela             -  xxxxxxx
+*    -Rodrigo das Neves Bernardi  -  8066395
 *
 ******************************************************************/
 

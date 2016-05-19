@@ -4,7 +4,8 @@
 *    SCC0251 - Processamento de Imagem
 *    Arquivo pdi.hpp - Header com escopo de funcoes
 *
-*    -Rodrigo das Neves Bernardi - 8066395
+*	 -Gabriel Estrela             -  xxxxxxx
+*    -Rodrigo das Neves Bernardi  -  8066395
 *
 ******************************************************************/
 
@@ -23,6 +24,7 @@ using namespace std;
 using namespace cv;
 
 
+void houghLines();
 void generateLines( Mat, vector<Vec2f> );
 
 

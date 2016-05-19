@@ -1,0 +1,3 @@
+/home/rhobernardi/Desktop/USP/PDI/PGMProg/CMakeFiles/edit_cache.dir
+/home/rhobernardi/Desktop/USP/PDI/PGMProg/CMakeFiles/rebuild_cache.dir
+/home/rhobernardi/Desktop/USP/PDI/PGMProg/CMakeFiles/corel10k.dir
