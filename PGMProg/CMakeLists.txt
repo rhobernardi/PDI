@@ -1,7 +1,0 @@
-cmake_minimum_required(VERSION 2.8)
-project( corel10k )
-find_package( OpenCV REQUIRED )
-include_directories( ${OpenCV_INCLUDE_DIRS} )
-add_executable( corel10k ./src/main.cpp ./src/pdi.hpp ./src/pdi.cpp )
-target_link_libraries( corel10k ${OpenCV_LIBS} )
-add_definitions( -std=c++11 )
