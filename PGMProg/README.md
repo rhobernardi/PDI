@@ -1,6 +1,6 @@
 #Projeto Final - Processamento de Imagem
 
-- Gabriel Estrela             -  xxxxxxx
+- Gabriel Estrela             -  8124138
 - Rodrigo das Neves Bernardi  -  8066395
 
 Para compilar, vá a pasta onde os arquivos foram unziped e digite o comando:
