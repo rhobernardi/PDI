@@ -39,29 +39,21 @@ int main( int argc, char** argv )
   //point_imgs = GEN_POINTS(imgs);
   //imshow("KeyPoints 1", point_imgs[0]);
 
-  //GENERATING THE DESCRIPTORS USING SIFT 
-  // begin = clock();
-  // descriptors = GEN_SIFT_VEC(imgs);
-  // end = clock();
-  // elapsed_secs = double(end - begin) / CLOCKS_PER_SEC;
-  // cout << "\nTime to generate the descriptors: " << elapsed_secs/60 << " minutes." << endl;
-  //GENERATING THE DESCRIPTORS USING SIFT
+  // GENERATING THE DESCRIPTORS USING SIFT 
+  begin = clock();
+  descriptors = GEN_SIFT_VEC(imgs);
+  end = clock();
+  elapsed_secs = double(end - begin) / CLOCKS_PER_SEC;
+  cout << "\nTime to generate the descriptors: " << elapsed_secs/60 << " minutes." << endl;
+  // GENERATING THE DESCRIPTORS USING SIFT
 
-  //WRITE_SIFT_XML(descriptors);
-
-  //READING DESCRIPTORS FROM FILES!
-  // Mat teste255, teste1;
-  // begin = clock();
-  // teste1 = READ_SIFT_XML("SIFT.xml", 1);
-  // teste255 = READ_SIFT_XML("SIFT.xml", 2);
-  // end = clock();
-  // elapsed_secs = double(end - begin) / CLOCKS_PER_SEC;
-  // cout << "\nTime to read the descripto from file: " << elapsed_secs/60 << " minutes." << endl;
-  // imshow("Image 1", imgs[0]);
-  // imshow("Descriptor 2", descriptors[1]);
-  // imshow("Descriptor 2 From File", teste255);
-  //READING DESCRIPTORS FROM FILES!
-
+  // WRITING DESCRIPTORS TO 2 XML FILES
+  // SIFT.XML AND SIFT2.XML
+  begin = clock();
+  WRITE_SIFT_XML(descriptors);
+  end = clock();
+  elapsed_secs = double(end - begin) / CLOCK_PER_SEC;
+  cout << "\nTime to write the descriptors: " << elapsed_secs/60 << " minutes." << endl;
   //descriptors.clear();
 
   waitKey(0);
@@ -131,7 +123,7 @@ vector<Mat> GEN_POINTS(vector<Mat> images){
   vector<KeyPoint> keypoints;
 
   //loop para detectar os pontos
-  //impressao de quantidade para reducao ou aumento na
+  //impressao auxiliar de quantidade para reducao ou aumento na
   //quantidade de pontos
   //desenho dos keypoints da imagem original para a imagem aux
   //adicao da Mat aux no vetor de retorno
@@ -162,12 +154,13 @@ vector<Mat> GEN_SIFT_VEC(vector<Mat> images){
   //OLHAR: http://docs.opencv.org/3.0-beta/modules/xfeatures2d/doc/nonfree_features.html
   //PARA MAIOR DESCRICAO DE PARAMETROS 
   Ptr<Feature2D> f2d = xfeatures2d::SIFT::create(0, 3, 0.22, 10, 1.6);
+  // Ptr<Feature2D> f2d = xfeatures2d::SIFT::create(0, 3, 0.18, 10, 0.8);
 
 
   //loop para detectar pontos de interesse
   //geracao de descritores com a funcao compute
   //adicao da Mat aux no vetor de retorno
-  //impressao para checagem de qual descritor foi criado
+  //impressao aux para checagem de qual descritor foi criado
   for(i = 0; i < images.size(); i++){
     //cout << i << endl;
     Mat aux;
@@ -215,9 +208,8 @@ void WRITE_SIFT_XML(vector<Mat> descriptors){
   return;
 }
 
-//FUNCAO QUE LE ARQUIVOS DE DESCRITORES
+//FUNCAO QUE LE APENAS UM DESCRITOR DO ARQUIVO
 Mat READ_SIFT_XML(string pathToFile, int pos){
-  //estou lendo apenas um por hora
   Mat descriptor;//Mat de retorno
   string picture = "Descriptor_";//id do descriptor
   picture += to_string(pos);//id do descriptor completo

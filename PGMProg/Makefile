@@ -1,9 +1,11 @@
 all: compile run
 
 compile:
-	#g++ -ggdb `pkg-config opencv --cflags --libs` compare.cpp -o corel10k
-	g++ -ggdb `pkg-config opencv --cflags --libs` makeFourierDescriptors.cpp -o fourier
-	
+	g++ -ggdb `pkg-config opencv --cflags --libs` compare_atualizado.cpp -o corel10k
+	# g++ -ggdb `pkg-config opencv --cflags --libs` makeDescriptors.cpp -o mkDesc
+	# g++ -ggdb `pkg-config opencv --cflags --libs` mFDesc.cpp -o fourier
 run:
-	#./corel10k 1.jpg 2 SIFT
-	./fourier
+	./corel10k 200.jpg 5 SIFT
+	# ./corel10k 200.jpg 5 FOURIER
+	# ./mkDesc
+	# ./fourier
