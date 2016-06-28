@@ -1,4 +1,4 @@
-all: compile run
+all: compile
 
 compile:
 	g++ -ggdb `pkg-config opencv --cflags --libs` compare_atualizado.cpp -o corel10k
